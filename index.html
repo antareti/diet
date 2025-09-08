@@ -19,9 +19,9 @@
     #lang-switcher {display:flex; justify-content:center; gap:10px; margin-top:10px;}
     .flag {
       cursor: pointer;
-      font-size:28px;
-      padding:6px;
-      border-radius:10px;
+      width: 40px;
+      height: 28px;
+      border-radius:6px;
       border:2px solid transparent;
       transition: all 0.3s ease;
     }
@@ -42,15 +42,14 @@
     <h1 id="title">AI Diet Planner (online)</h1>
     <p id="subtitle">Загрузи фото — получи готовую диету</p>
     <div id="lang-switcher">
-      <div class="flag active" data-lang="ru">🇷🇺</div>
-      <div class="flag" data-lang="en">🇬🇧</div>
-      <div class="flag" data-lang="ka">🇬🇪</div>
+      <img class="flag active" data-lang="ru" src="https://flagcdn.com/w40/ru.png" alt="RU">
+      <img class="flag" data-lang="en" src="https://flagcdn.com/w40/gb.png" alt="EN">
+      <img class="flag" data-lang="ka" src="https://flagcdn.com/w40/ge.png" alt="GE">
     </div>
     <a href="diets.html" class="btn">Перейти к диетам</a>
   </header>
 
   <main class="app">
-    <!-- Левая панель -->
     <section class="card">
       <h2 id="uploadTitle">Загрузка фото</h2>
       <label class="btn" for="file" id="uploadBtn">Выбрать фото</label>
@@ -65,7 +64,6 @@
       <button class="btn" id="analyze">Назначить диету</button>
     </section>
 
-    <!-- Правая панель -->
     <section class="card">
       <h2 id="resultTitle">Твоя диета</h2>
       <div id="result" class="diet">Здесь появится план питания</div>
@@ -73,7 +71,6 @@
     </section>
   </main>
 
-  <!-- Анимированный градиентный счётчик -->
   <div style="max-width:300px; margin:30px auto; padding:15px; background:#111319; border-radius:18px; box-shadow:0 6px 18px rgba(0,0,0,.35); text-align:center; font-family:system-ui;">
     <div style="color:#60a5fa; font-weight:bold; margin-bottom:10px;">Free Visitors</div>
     <div id="animated-counter" style="display:flex; justify-content:center; gap:2px; font-size:28px; font-weight:700;"></div>
@@ -122,12 +119,12 @@
     let currentLang = "ru";
 
     const diets = {
-      ru: { /* ... */ },
-      en: { /* ... */ },
-      ka: { /* ... */ }
+      ru: { /* ... твои данные ... */ },
+      en: { /* ... твои данные ... */ },
+      ka: { /* ... твои данные ... */ }
     };
 
-    const uiText = { /* ... */ };
+    const uiText = { /* ... твои данные ... */ };
 
     fileInput.addEventListener('change', e=>{
       const f = e.target.files[0];
