@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Diet Planner</title>
+  <style>
+    body {margin:0; font-family:system-ui; background:#0b0c10; color:#e6e7eb;}
+    .app {max-width:900px; margin:40px auto; display:grid; grid-template-columns:1fr 1fr; gap:20px; padding:0 20px;}
+    .card {background:#111319; border-radius:18px; padding:20px; box-shadow:0 6px 18px rgba(0,0,0,.35);}
+    .btn {display:inline-block; padding:12px 18px; border-radius:12px;
+          background:linear-gradient(135deg,#6ee7b7,#60a5fa); color:#0b1220;
+          font-weight:700; cursor:pointer; border:none;}
+    input[type=file]{display:none}
+    .preview img {max-width:100%; border-radius:14px; border:1px solid rgba(255,255,255,.1);}
+    .diet {margin-top:12px; line-height:1.5;}
+    h2 {margin-top:0;}
+  </style>
+</head>
+<body>
+  <header style="text-align:center; margin:20px;">
+    <h1>AI Diet Planner (online)</h1>
+    <p>Загрузи фото — получи готовую диету</p>
+  </header>
+
+  <main class="app">
+    <!-- Левая панель: загрузка -->
+    <section class="card">
+      <h2>Загрузка фото</h2>
+      <label class="btn" for="file">Выбрать фото</label>
+      <input type="file" id="file" accept="image/*">
+      <div class="preview" style="margin-top:16px">
+        <img id="img" hidden>
+      </div>
+      <button class="btn" id="analyze" style="margin-top:16px">Назначить диету</button>
+    </section>
+
+    <!-- Правая панель: результат -->
+    <section class="card">
+      <h2>Твоя диета</h2>
+      <div id="result" class="diet">Здесь появится план питания</div>
+    </section>
+  </main>
+
+  <script>
+    const fileInput = document.getElementById('file');
+    const img = document.getElementById('img');
+    const analyzeBtn = document.getElementById('analyze');
+    const resultEl = document.getElementById('result');
+
+    const diets = [
+      {
+        title: "Похудение",
+        text: "Завтрак: овсянка с ягодами (300 ккал)<br>Обед: куриная грудка + овощи (450 ккал)<br>Ужин: салат с тунцом (350 ккал)<br>Перекус: яблоко, миндаль (150 ккал)<br><b>Итого: ~1250 ккал</b>"
+      },
+      {
+        title: "Набор массы",
+        text: "Завтрак: омлет из 4 яиц + хлеб (500 ккал)<br>Обед: рис + говядина + овощи (700 ккал)<br>Ужин: паста с курицей (600 ккал)<br>Перекус: протеиновый коктейль, банан (300 ккал)<br><b>Итого: ~2100 ккал</b>"
+      },
+      {
+        title: "Поддержание веса",
+        text: "Завтрак: йогурт с мюсли (350 ккал)<br>Обед: курица + гречка + овощи (550 ккал)<br>Ужин: рыба на пару + овощи (450 ккал)<br>Перекус: орехи, фрукты (250 ккал)<br><b>Итого: ~1600 ккал</b>"
+      }
+    ];
+
+    fileInput.addEventListener('change', e=>{
+      const f = e.target.files[0];
+      if(f){
+        img.src = URL.createObjectURL(f);
+        img.hidden = false;
+      }
+    });
+
+    analyzeBtn.addEventListener('click', ()=>{
+      const d = diets[Math.floor(Math.random()*diets.length)];
+      resultEl.innerHTML = `<h3>${d.title}</h3>${d.text}`;
+    });
+  </script>
+</body>
+</html>
