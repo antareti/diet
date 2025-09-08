@@ -119,12 +119,37 @@
     let currentLang = "ru";
 
     const diets = {
-      ru: { /* ... твои данные ... */ },
-      en: { /* ... твои данные ... */ },
-      ka: { /* ... твои данные ... */ }
+      ru: {
+        loss: {title:"Похудение", text:"08:00 – Завтрак: овсянка с ягодами (300 ккал)\n13:00 – Обед: куриная грудка + салат (450 ккал)\n19:00 – Ужин: салат с тунцом (350 ккал)",
+          week:["Понедельник: овощной суп, салат","Вторник: рыба на пару, гречка","Среда: куриная грудка, овощи","Четверг: омлет, салат","Пятница: творог, фрукты","Суббота: индейка, овощи","Воскресенье: лёгкий суп, овощи"]},
+        gain: {title:"Набор массы", text:"08:00 – Завтрак: омлет из 4 яиц, хлеб (500 ккал)\n13:30 – Обед: рис, говядина, овощи (700 ккал)\n20:00 – Ужин: паста с курицей (600 ккал)",
+          week:["Понедельник: курица, рис","Вторник: говядина, картофель","Среда: омлет, тосты","Четверг: паста, курица","Пятница: рыба, рис","Суббота: индейка, макароны","Воскресенье: пицца домашняя"]},
+        keep: {title:"Поддержание веса", text:"07:30 – Завтрак: йогурт с мюсли (350 ккал)\n13:00 – Обед: курица, гречка, овощи (550 ккал)\n19:30 – Ужин: рыба + салат (450 ккал)",
+          week:["Понедельник: каша, фрукты","Вторник: рыба, овощи","Среда: курица, салат","Четверг: омлет, овощи","Пятница: йогурт, орехи","Суббота: индейка, овощи","Воскресенье: овощной суп"]}
+      },
+      en: {
+        loss: {title:"Weight Loss", text:"08:00 – Breakfast: oatmeal with berries (300 kcal)\n13:00 – Lunch: grilled chicken + salad (450 kcal)\n19:00 – Dinner: tuna salad (350 kcal)",
+          week:["Mon: vegetable soup, salad","Tue: steamed fish, buckwheat","Wed: chicken breast, veggies","Thu: omelet, salad","Fri: cottage cheese, fruits","Sat: turkey, veggies","Sun: light soup, salad"]},
+        gain: {title:"Muscle Gain", text:"08:00 – Breakfast: 4-egg omelet, bread (500 kcal)\n13:30 – Lunch: rice, beef, veggies (700 kcal)\n20:00 – Dinner: pasta with chicken (600 kcal)",
+          week:["Mon: chicken & rice","Tue: beef & potatoes","Wed: omelet & toasts","Thu: pasta & chicken","Fri: fish & rice","Sat: turkey & pasta","Sun: homemade pizza"]},
+        keep: {title:"Maintain Weight", text:"07:30 – Breakfast: yogurt with muesli (350 kcal)\n13:00 – Lunch: chicken, buckwheat, veggies (550 kcal)\n19:30 – Dinner: fish + salad (450 kcal)",
+          week:["Mon: porridge, fruits","Tue: fish & veggies","Wed: chicken & salad","Thu: omelet & veggies","Fri: yogurt & nuts","Sat: turkey & veggies","Sun: vegetable soup"]}
+      },
+      ka: {
+        loss: {title:"წონის დაკლება", text:"08:00 – საუზმე: შვრიის ფაფა ხილით (300 კკალ)\n13:00 – სადილი: ქათმის ფილე + სალათი (450 კკალ)\n19:00 – ვახშამი: თინუსის სალათი (350 კკალ)",
+          week:["ორშაბათი: ბოსტნეულის სუპი, სალათი","სამშაბათი: თევზი ბოსტნეულით","ოთხშაბათი: ქათმის ფილე, ბოსტნეული","ხუთშაბათი: ომლეტი, სალათი","პარასკევი: ხაჭო, ხილი","შაბათი: ინდაური, ბოსტნეული","კვირა: მსუბუქი სუპი, ბოსტნეული"]},
+        gain: {title:"კუნთების მასის გაზრდა", text:"08:00 – საუზმე: ომლეტი 4 კვერცხით, პური (500 კკალ)\n13:30 – სადილი: ბრინჯი, ძროხის ხორცი, ბოსტნეული (700 კკალ)\n20:00 – ვახშამი: პასტა ქათმით (600 კკალ)",
+          week:["ორშაბათი: ქათამი, ბრინჯი","სამშაბათი: ძროხის ხორცი, კარტოფილი","ოთხშაბათი: ომლეტი","ხუთშაბათი: პასტა ქათმით","პარასკევი: თევზი","შაბათი: ინდაური","კვირა: სახლის პიცა"]},
+        keep: {title:"წონის შენარჩუნება", text:"07:30 – საუზმე: იოგურტი მიუსლით (350 კკალ)\n13:00 – სადილი: ქათამი, წიწიბურა, ბოსტნეული (550 კკალ)\n19:30 – ვახშამი: თევზი + სალათი (450 კკალ)",
+          week:["ორშაბათი: ფაფა, ხილი","სამშაბათი: თევზი, ბოსტნეული","ოთხშაბათი: ქათამი, სალათი","ხუთშაბათი: ომლეტი, ბოსტნეული","პარასკევი: იოგურტი, თხილი","შაბათი: ინდაური, ბოსტნეული","კვირა: ბოსტნეულის სუპი"]}
+      }
     };
 
-    const uiText = { /* ... твои данные ... */ };
+    const uiText = {
+      ru:{title:"AI Diet Planner (online)",subtitle:"Загрузи фото — получи готовую диету",uploadTitle:"Загрузка фото",uploadBtn:"Выбрать фото",analyze:"Назначить диету",resultTitle:"Твоя диета",empty:"Здесь появится план питания",week:"Диета недели"},
+      en:{title:"AI Diet Planner (online)",subtitle:"Upload a photo — get your diet plan",uploadTitle:"Upload Photo",uploadBtn:"Choose Photo",analyze:"Generate Diet",resultTitle:"Your Diet",empty:"Your diet plan will appear here",week:"Weekly Diet"},
+      ka:{title:"AI დიეტის პლანერი",subtitle:"ატვირთე ფოტო — მიიღე დიეტა",uploadTitle:"ფოტოს ატვირთვა",uploadBtn:"ფოტო",analyze:"დიეტის გენერაცია",resultTitle:"შენი დიეტა",empty:"აქ გამოჩნდება დიეტა",week:"კვირის დიეტა"}
+    };
 
     fileInput.addEventListener('change', e=>{
       const f = e.target.files[0];
