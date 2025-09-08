@@ -19,7 +19,7 @@
 <body>
   <header style="text-align:center; margin:20px;">
     <h1>AI Diet Planner (online)</h1>
-    <p>Загрузи фото — получи готовую диету / Upload photo — get your diet</p>
+    <p>Загрузи фото — получи готовую диету / Upload a photo — get your diet</p>
   </header>
 
   <main class="app">
@@ -31,13 +31,13 @@
       <div class="preview" style="margin-top:16px">
         <img id="img" hidden>
       </div>
-      <button class="btn" id="analyze" style="margin-top:16px">Назначить диету / Assign Diet</button>
+      <button class="btn" id="analyze" style="margin-top:16px">Назначить диету / Generate Diet</button>
     </section>
 
     <!-- Правая панель: результат -->
     <section class="card">
       <h2>Твоя диета / Your Diet</h2>
-      <div id="result" class="diet">Здесь появится план питания / Your plan will appear here</div>
+      <div id="result" class="diet">Здесь появится план питания / Diet plan will appear here</div>
     </section>
   </main>
 
@@ -49,24 +49,24 @@
 
     const diets = [
       {
-        title: {ru:"Похудение", en:"Weight Loss"},
+        title: {ru: "Похудение", en: "Weight Loss"},
         text: {
-          ru:"08:00 – Завтрак: овсянка с ягодами и зелёный чай (300 ккал)<br>13:00 – Обед: куриная грудка на гриле + овощной салат (450 ккал)<br>19:00 – Ужин: салат с тунцом и овощами (350 ккал)<br><b>Итого: ~1100 ккал</b>",
-          en:"08:00 – Breakfast: oatmeal with berries and green tea (300 kcal)<br>13:00 – Lunch: grilled chicken breast + vegetable salad (450 kcal)<br>19:00 – Dinner: tuna salad with vegetables (350 kcal)<br><b>Total: ~1100 kcal</b>"
+          ru: "08:00 – Завтрак: овсянка с ягодами и зелёный чай (300 ккал)<br>13:00 – Обед: куриная грудка на гриле + овощной салат (450 ккал)<br>19:00 – Ужин: салат с тунцом и овощами (350 ккал)<br><b>Итого: ~1100 ккал</b>",
+          en: "08:00 – Breakfast: oatmeal with berries and green tea (300 kcal)<br>13:00 – Lunch: grilled chicken breast + vegetable salad (450 kcal)<br>19:00 – Dinner: tuna salad with vegetables (350 kcal)<br><b>Total: ~1100 kcal</b>"
         }
       },
       {
-        title: {ru:"Набор массы", en:"Muscle Gain"},
+        title: {ru: "Набор массы", en: "Muscle Gain"},
         text: {
-          ru:"08:00 – Завтрак: омлет из 4 яиц + цельнозерновой хлеб, кофе (500 ккал)<br>13:30 – Обед: рис + говядина + овощи на пару (700 ккал)<br>20:00 – Ужин: паста с курицей и соусом (600 ккал)<br><b>Итого: ~1800 ккал</b>",
-          en:"08:00 – Breakfast: 4-egg omelet + whole grain bread, coffee (500 kcal)<br>13:30 – Lunch: rice + beef + steamed vegetables (700 kcal)<br>20:00 – Dinner: pasta with chicken and sauce (600 kcal)<br><b>Total: ~1800 kcal</b>"
+          ru: "08:00 – Завтрак: омлет из 4 яиц + цельнозерновой хлеб, кофе (500 ккал)<br>13:30 – Обед: рис + говядина + овощи на пару (700 ккал)<br>20:00 – Ужин: паста с курицей и соусом (600 ккал)<br><b>Итого: ~1800 ккал</b>",
+          en: "08:00 – Breakfast: 4-egg omelet + whole-grain bread, coffee (500 kcal)<br>13:30 – Lunch: rice + beef + steamed vegetables (700 kcal)<br>20:00 – Dinner: pasta with chicken and sauce (600 kcal)<br><b>Total: ~1800 kcal</b>"
         }
       },
       {
-        title: {ru:"Поддержание веса", en:"Maintain Weight"},
+        title: {ru: "Поддержание веса", en: "Weight Maintenance"},
         text: {
-          ru:"07:30 – Завтрак: йогурт с мюсли и фруктами (350 ккал)<br>13:00 – Обед: курица + гречка + овощи (550 ккал)<br>19:30 – Ужин: рыба на пару + салат из свежих овощей (450 ккал)<br><b>Итого: ~1350 ккал</b>",
-          en:"07:30 – Breakfast: yogurt with muesli and fruits (350 kcal)<br>13:00 – Lunch: chicken + buckwheat + vegetables (550 kcal)<br>19:30 – Dinner: steamed fish + fresh vegetable salad (450 kcal)<br><b>Total: ~1350 kcal</b>"
+          ru: "07:30 – Завтрак: йогурт с мюсли и фруктами (350 ккал)<br>13:00 – Обед: курица + гречка + овощи (550 ккал)<br>19:30 – Ужин: рыба на пару + салат из свежих овощей (450 ккал)<br><b>Итого: ~1350 ккал</b>",
+          en: "07:30 – Breakfast: yogurt with muesli and fruits (350 kcal)<br>13:00 – Lunch: chicken + buckwheat + vegetables (550 kcal)<br>19:30 – Dinner: steamed fish + fresh vegetable salad (450 kcal)<br><b>Total: ~1350 kcal</b>"
         }
       }
     ];
@@ -79,38 +79,26 @@
       }
     });
 
-    function timeToWordsRu(time){
-      const [h,m] = time.split(':').map(Number);
-      return `${h} ${m}`;
-    }
-
-    function timeToWordsEn(time){
-      let [h,m] = time.split(':').map(Number);
-      const ampm = h>=12?'pm':'am';
-      if(h>12) h=h-12;
-      if(h===0) h=12;
-      return `${h}:${m<10?'0'+m:m} ${ampm}`;
-    }
-
-    function speak(text, lang){
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.lang = lang;
-      speechSynthesis.speak(utter);
-    }
-
     analyzeBtn.addEventListener('click', ()=>{
       const d = diets[Math.floor(Math.random()*diets.length)];
+
+      // Определяем язык браузера
       const userLang = navigator.language.startsWith('ru') ? 'ru' : 'en';
-      const title = d.title[userLang];
-      let text = d.text[userLang];
+      resultEl.innerHTML = `<h3>${d.title[userLang]}</h3>${d.text[userLang]}`;
 
-      // преобразуем время в слова
-      text = text.replace(/(\d{1,2}:\d{2})/g, (m)=>{
-        return userLang==='ru'? timeToWordsRu(m) : timeToWordsEn(m);
-      });
+      // Тексты для озвучки
+      const textRu = d.title.ru + ', ' + d.text.ru.replace(/<br>/g, ', ');
+      const textEn = d.title.en + ', ' + d.text.en.replace(/<br>/g, ', ');
 
-      resultEl.innerHTML = `<h3>${title}</h3>${text}`;
-      speak(title + " " + text.replace(/<br>/g, ', '), userLang==='ru'?'ru-RU':'en-US');
+      // Создаём объекты озвучки
+      const utterRu = new SpeechSynthesisUtterance(textRu);
+      utterRu.lang = 'ru-RU';
+      const utterEn = new SpeechSynthesisUtterance(textEn);
+      utterEn.lang = 'en-US';
+
+      // Русская озвучка, затем английская
+      utterRu.onend = ()=>speechSynthesis.speak(utterEn);
+      speechSynthesis.speak(utterRu);
     });
   </script>
 </body>
