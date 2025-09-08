@@ -19,6 +19,7 @@
     .flag:hover {transform: scale(1.2);}
     .flag.active {border-color: #60a5fa; background: rgba(96,165,250,0.2);}
     input.number {margin:5px 0; padding:6px; border-radius:6px; border:none; width:100%;}
+    .week-plan {margin-top:20px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.2);}
   </style>
 </head>
 <body>
@@ -28,11 +29,12 @@
     <div id="lang-switcher">
       <div class="flag" data-lang="ru">🇷🇺</div>
       <div class="flag" data-lang="en">🇺🇸</div>
+      <div class="flag" data-lang="ka">🇬🇪</div>
     </div>
   </header>
 
   <main class="app">
-    <!-- Левая панель: загрузка -->
+    <!-- Левая панель -->
     <section class="card">
       <h2 id="uploadTitle">Загрузка фото</h2>
       <label class="btn" for="file" id="uploadBtn">Выбрать фото</label>
@@ -45,7 +47,7 @@
       <button class="btn" id="analyze">Назначить диету</button>
     </section>
 
-    <!-- Правая панель: результат -->
+    <!-- Правая панель -->
     <section class="card">
       <h2 id="resultTitle">Твоя диета</h2>
       <div id="result" class="diet">Здесь появится план питания</div>
@@ -73,65 +75,7 @@
         {title: "Weight Loss", text: "08:00 – Breakfast: oatmeal with berries and green tea (300 kcal)\n13:00 – Lunch: grilled chicken breast with vegetable salad (450 kcal)\n19:00 – Dinner: tuna salad with vegetables (350 kcal)\nTotal: about 1100 kcal."},
         {title: "Muscle Gain", text: "08:00 – Breakfast: omelet of 4 eggs with whole grain bread, coffee (500 kcal)\n13:30 – Lunch: rice with beef and steamed vegetables (700 kcal)\n20:00 – Dinner: pasta with chicken and sauce (600 kcal)\nTotal: about 1800 kcal."},
         {title: "Maintain Weight", text: "07:30 – Breakfast: yogurt with muesli and fruits (350 kcal)\n13:00 – Lunch: chicken, buckwheat and vegetables (550 kcal)\n19:30 – Dinner: steamed fish with fresh vegetable salad (450 kcal)\nTotal: about 1350 kcal."}
-      ]
-    };
-
-    const uiText = {
-      ru: {title: "AI Diet Planner (online)", subtitle: "Загрузи фото — получи готовую диету", uploadTitle: "Загрузка фото", uploadBtn: "Выбрать фото", analyze: "Назначить диету", resultTitle: "Твоя диета", empty: "Здесь появится план питания"},
-      en: {title: "AI Diet Planner (online)", subtitle: "Upload a photo — get your diet plan", uploadTitle: "Upload Photo", uploadBtn: "Choose Photo", analyze: "Generate Diet", resultTitle: "Your Diet", empty: "Your diet plan will appear here"}
-    };
-
-    fileInput.addEventListener('change', e=>{
-      const f = e.target.files[0];
-      if(f){ img.src = URL.createObjectURL(f); img.hidden = false; }
-    });
-
-    function speak(text, lang) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = lang === "ru" ? "ru-RU" : "en-US";
-      speechSynthesis.cancel();
-      speechSynthesis.speak(utterance);
-    }
-
-    function calculateBMI(weight, height){
-      if(!weight || !height) return null;
-      return weight / ((height/100)**2);
-    }
-
-    analyzeBtn.addEventListener('click', ()=>{
-      const weight = parseFloat(weightInput.value);
-      const height = parseFloat(heightInput.value);
-      const bmi = calculateBMI(weight, height);
-      let dietList = diets[currentLang];
-
-      if(bmi !== null){
-        if(bmi < 18.5) dietList = [diets[currentLang][1]]; // Набор массы
-        else if(bmi < 25) dietList = [diets[currentLang][2]]; // Поддержание веса
-        else dietList = [diets[currentLang][0]]; // Похудение
-      }
-
-      const d = dietList[Math.floor(Math.random()*dietList.length)];
-      resultEl.innerHTML = `<h3>${d.title}</h3>${d.text.replace(/\n/g,"<br>")}`;
-      speak(`${d.title}. ${d.text}`, currentLang);
-    });
-
-    function setLanguage(lang) {
-      currentLang = lang;
-      const t = uiText[currentLang];
-      document.getElementById("title").innerText = t.title;
-      document.getElementById("subtitle").innerText = t.subtitle;
-      document.getElementById("uploadTitle").innerText = t.uploadTitle;
-      document.getElementById("uploadBtn").innerText = t.uploadBtn;
-      document.getElementById("analyze").innerText = t.analyze;
-      document.getElementById("resultTitle").innerText = t.resultTitle;
-      resultEl.innerText = t.empty;
-      flags.forEach(f => f.classList.toggle('active', f.dataset.lang === lang));
-    }
-
-    flags.forEach(flag => flag.addEventListener('click', ()=>setLanguage(flag.dataset.lang)));
-
-    // Инициализация
-    setLanguage('ru');
-  </script>
-</body>
-</html>
+      ],
+      ka: [
+        {title: "წონის დაკლება", text: "08:00 – საუზმე: შვრია კენკრით და მწვანე ჩაი (300 კკალ)\n13:00 – სადილი: შემწვარი ქათმის ფილე ბოსტნეულის სალათით (450 კკალ)\n19:00 – ვახშამი: თინუსის სალათი ბოსტნეულით (350 კკალ)\nჯამში: დაახლოებით 1100 კკალ."},
+        {title: "მასის მომატება", text: "08:00 – საუზმე: 4 კვერცხის ომლეტი და მარცვლოვანი პური, ყავა (500 კკალ)\n13:30 – სადილი: ბრინჯი, საქონლის ხორცი და ორთქლზე მოხარშული ბოსტნეული (700 კკალ)\n20:00 – ვახშამი: პასტა ქათმით და სოუსით (600 კკალ)\nჯამში: დაახლოე
