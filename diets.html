@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Weekly Diet Planner</title>
+<style>
+body {margin:0; font-family:system-ui; background:#0b0c10; color:#e6e7eb;}
+header {text-align:center; padding:20px;}
+h1 {margin:0;}
+.switchers {display:flex; justify-content:center; gap:20px; margin:10px 0; flex-wrap:wrap;}
+.flag, .diet-type {cursor:pointer; padding:6px 12px; border-radius:10px; border:2px solid transparent; transition:0.3s; user-select:none;}
+.flag.active, .diet-type.active {border-color:#60a5fa; background: rgba(96,165,250,0.2);}
+.week {display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap:16px; padding:20px;}
+.day-card {background:#111319; border-radius:14px; padding:16px; box-shadow:0 4px 12px rgba(0,0,0,0.35);}
+.day-card h3 {margin-top:0;}
+.meal {margin-bottom:8px;}
+.recipe {font-size:0.9em; color:#cfd0d6; margin-left:8px;}
+@media(max-width:600px){ .week {grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+
+<header>
+<h1 id="title">Weekly Diet Planner</h1>
+<div class="switchers">
+  <div class="diet-type active" data-type="weight-loss">Похудение</div>
+  <div class="diet-type" data-type="maintain">Поддержание</div>
+  <div class="diet-type" data-type="muscle-gain">Набор массы</div>
+</div>
+<div class="switchers">
+  <div class="flag active" data-lang="ru">🇷🇺</div>
+  <div class="flag" data-lang="en">🇺🇸</div>
+  <div class="flag" data-lang="ge">🇬🇪</div>
+</div>
+</header>
+
+<main class="week" id="week-plan"></main>
+
+<script>
+const weekPlan = document.getElementById('week-plan');
+let currentLang = 'ru';
+let currentType = 'weight-loss';
+const flags = document.querySelectorAll('.flag');
+const dietTypes = document.querySelectorAll('.diet-type');
+
+// Полное меню на неделю для всех типов и языков
+const diets = {
+  "weight-loss": {
+    "ru": [
+      {day:1, meals:[{name:'Завтрак', dish:'Овсянка с ягодами (200г)', recipe:'Сварить овсянку, добавить ягоды и мед'}, {name:'Обед', dish:'Куриная грудка с овощами (250г)', recipe:'Обжарить курицу, запечь овощи'}, {name:'Ужин', dish:'Салат с тунцом (150г)', recipe:'Смешать тунец, салат, помидоры'}]},
+      {day:2, meals:[{name:'Завтрак', dish:'Йогурт с фруктами (200г)', recipe:'Добавить нарезанные фрукты в йогурт'}, {name:'Обед', dish:'Рыба на пару с брокколи (250г)', recipe:'Приготовить рыбу на пару, подать с брокколи'}, {name:'Ужин', dish:'Суп из овощей (200мл)', recipe:'Сварить овощи, протереть суп'}]},
+      {day:3, meals:[{name:'Завтрак', dish:'Смузи из банана и шпината (250мл)', recipe:'Смешать банан, шпинат и воду'}, {name:'Обед', dish:'Индейка с киноа (200г)', recipe:'Обжарить индейку, отварить киноа'}, {name:'Ужин', dish:'Салат из помидоров и огурцов (150г)', recipe:'Нарезать овощи, заправить оливковым маслом'}]},
+      {day:4, meals:[{name:'Завтрак', dish:'Греческий йогурт с медом и орехами (200г)', recipe:'Добавить мед и орехи в йогурт'}, {name:'Обед', dish:'Куриная грудка с овощами на пару (250г)', recipe:'Приготовить на пару'}, {name:'Ужин', dish:'Салат с морепродуктами (150г)', recipe:'Смешать морепродукты с зеленью'}]},
+      {day:5, meals:[{name:'Завтрак', dish:'Омлет с овощами (200г)', recipe:'Взбить яйца с овощами, приготовить на сковороде'}, {name:'Обед', dish:'Тунец с салатом (200г)', recipe:'Смешать тунец, салат, помидоры'}, {name:'Ужин', dish:'Суп из тыквы (200мл)', recipe:'Сварить тыкву, протереть суп'}]},
+      {day:6, meals:[{name:'Завтрак', dish:'Каша из гречки с фруктами (200г)', recipe:'Сварить гречку, добавить яблоки или груши'}, {name:'Обед', dish:'Курица с овощами (250г)', recipe:'Обжарить курицу, приготовить овощи'}, {name:'Ужин', dish:'Салат с авокадо (150г)', recipe:'Нарезать авокадо, добавить зелень и лимонный сок'}]},
+      {day:7, meals:[{name:'Завтрак', dish:'Смузи из ягод и банана (250мл)', recipe:'Смешать ягоды, банан и воду'}, {name:'Обед', dish:'Рыба на гриле с овощами (250г)', recipe:'Обжарить рыбу на гриле, подать с овощами'}, {name:'Ужин', dish:'Салат из свежих овощей (150г)', recipe:'Нарезать овощи, заправить оливковым маслом'}]}
+    ],
+    "en": [
+      {day:1, meals:[{name:'Breakfast', dish:'Oatmeal with berries (200g)', recipe:'Cook oatmeal, add berries and honey'}, {name:'Lunch', dish:'Grilled chicken with vegetables (250g)', recipe:'Grill chicken, bake vegetables'}, {name:'Dinner', dish:'Tuna salad (150g)', recipe:'Mix tuna, lettuce, tomatoes'}]},
+      {day:2, meals:[{name:'Breakfast', dish:'Yogurt with fruits (200g)', recipe:'Add chopped fruits to yogurt'}, {name:'Lunch', dish:'Steamed fish with broccoli (250g)', recipe:'Steam fish, serve with broccoli'}, {name:'Dinner', dish:'Vegetable soup (200ml)', recipe:'Cook vegetables, blend soup'}]},
+      {day:3, meals:[{name:'Breakfast', dish:'Banana-spinach smoothie (250ml)', recipe:'Blend banana, spinach and water'}, {name:'Lunch', dish:'Turkey with quinoa (200g)', recipe:'Fry turkey, cook quinoa'}, {name:'Dinner', dish:'Tomato-cucumber salad (150g)', recipe:'Chop vegetables, add olive oil'}]},
+      {day:4, meals:[{name:'Breakfast', dish:'Greek yogurt with honey and nuts (200g)', recipe:'Add honey and nuts to yogurt'}, {name:'Lunch', dish:'Chicken with steamed vegetables (250g)', recipe:'Steam chicken with vegetables'}, {name:'Dinner', dish:'Seafood salad (150g)', recipe:'Mix seafood with greens'}]},
+      {day:5, meals:[{name:'Breakfast', dish:'Vegetable omelet (200g)', recipe:'Whisk eggs with vegetables, cook on pan'}, {name:'Lunch', dish:'Tuna salad (200g)', recipe:'Mix tuna, salad, tomatoes'}, {name:'Dinner', dish:'Pumpkin soup (200ml)', recipe:'Cook pumpkin, blend soup'}]},
+      {day:6, meals:[{name:'Breakfast', dish:'Buckwheat porridge with fruits (200g)', recipe:'Cook buckwheat, add apples or pears'}, {name:'Lunch', dish:'Chicken with vegetables (250g)', recipe:'Fry chicken, cook vegetables'}, {name:'Dinner', dish:'Avocado salad (150g)', recipe:'Chop avocado, add greens and lemon'}]},
+      {day:7, meals:[{name:'Breakfast', dish:'Berry-banana smoothie (250ml)', recipe:'Blend berries, banana and water'}, {name:'Lunch', dish:'Grilled fish with vegetables (250g)', recipe:'Grill fish, serve with vegetables'}, {name:'Dinner', dish:'Fresh vegetable salad (150g)', recipe:'Chop vegetables, add olive oil'}]}
+    ],
+    "ge": [
+      {day:1, meals:[{name:'საუზმე', dish:'გრეიფრუტი ოვესის ფაფით (200გ)', recipe:'ფაფის მომზადება, დამატება კენკრები და თაფლი'}, {name:'ლანჩი', dish:'გრილირებული ქათამი ბოსტნეულით (250გ)', recipe:'გრილირება ქათამი, გამომშრალი ბოსტნეული'}, {name:'ვახშამი', dish:'თინუსის სალათი (150გ)', recipe:'შერევა თინუსი, სალათი, პომიდორი'}]},
+      {day:2, meals:[{name:'საუზმე', dish:'იოგურტი ხილით (200გ)', recipe:'დამატება დაჭრილი ხილი იოგურტში'}, {name:'ლანჩი', dish:'თევზი ორთქლზე + ბროკოლი (250გ)', recipe:'გაამზადეთ თევზი ორთქლზე, მიირთვით ბროკოლით'}, {name:'ვახშამი', dish:'ბოსტნეულის სუპი (200მლ)', recipe:'დახარშეთ ბოსტნეული, გააკეთეთ სუპი'}]},
+      {day:3, meals:[{name:'საუზმე', dish:'ბანანი-სპინატის სმუზი (250მლ)', recipe:'შერევა ბანანი, სპინატი და წყალი'}, {name:'ლანჩი', dish:'ინდაური კინუათი (200გ)', recipe:'შეუწვათ ინდაური, მოამზადეთ კინუა'}, {name:'ვახშამი', dish:'პომიდორი-კიტრის სალათი (150გ)', recipe:'დაჭრილი ბოსტნეული, ზეთი'}]},
+      {day:4, meals:[{name:'საუზმე', dish:'ბრინჯი ხილით (200გ)', recipe:'დახარშეთ ბრინჯი, დაამატეთ ხილი'}, {name:'ლანჩი', dish:'თევზი გრილზე ბოსტნეულით (250გ)', recipe:'გრილირება თევზი, გამომშრალი ბოსტნეული'}, {name:'ვახშამი', dish:'სალათი ყველით და ბოსტნეულით (150გ)', recipe:'შეურიოთ ყველი, დაჭრილი ბოსტნეული'}]},
+      {day:5, meals:[{name:'საუზმე', dish:'ომლეტი ბოსტნეულით (200გ)', recipe:'დაფქვით კვერცხი ბოსტნეულით, გამოაცხეთ ტაფაზე'}, {name:'ლანჩი', dish:'ქათამი სალათით (250გ)', recipe:'შერევა ქათამი, სალათი'}, {name:'ვახშამი', dish:'ბოსტნეულის სუპი (200მლ)', recipe:'დახარშეთ ბოსტნეული, გააკეთეთ სუპი'}]},
+      {day:6, meals:[{name:'საუზმე', dish:'გრეჩიხის ფაფა ხილით (200გ)', recipe:'დახარშეთ გრეჩიხა, დაამატეთ ხილი'}, {name:'ლანჩი', dish:'ქათამი ბოსტნეულით (250გ)', recipe:'გრილირება ქათამი, ბოსტნეული'}, {name:'ვახშამი', dish:'სალათი ავოკადოთი (150გ)', recipe:'დაჭრილი ავოკადო, დაამატეთ მწვანილი და ლიმონის წვენი'}]},
+      {day:7, meals:[{name:'საუზმე', dish:'სმუზი კენკრით და банანით (250მლ)', recipe:'შერევა კენკრი, банანი და წყალი'}, {name:'ლანჩი', dish:'თევზი გრილზე ბოსტნეულით (250გ)', recipe:'გრილირება თევზი, გამომშრალი ბოსტნეული'}, {name:'ვახშამი', dish:'სალათი ახალი ბოსტნეული (150გ)', recipe:'დაჭრილი ბოსტნეული, დაამატეთ ზეთი'}]}
+    ]
+  },
+  "maintain": {
+    "ru":[ /* Аналогично заполните меню 7 дней */ ],
+    "en":[ /* English */ ],
+    "ge":[ /* Georgian */ ]
+  },
+  "muscle-gain": {
+    "ru":[ /* Аналогично */ ],
+    "en":[ /* English */ ],
+    "ge":[ /* Georgian */ ]
+  }
+};
+
+function renderWeek() {
+  weekPlan.innerHTML = '';
+  const weekData = (diets[currentType] && diets[currentType][currentLang]) || [];
+  weekData.forEach(day=>{
+    const dayCard = document.createElement('div');
+    dayCard.classList.add('day-card');
+    const dayLabel = currentLang==='ru'?'День':currentLang==='en'?'Day':'დღე';
+    dayCard.innerHTML = `<h3>${dayLabel} ${day.day}</h3>`;
+    day.meals.forEach(meal=>{
+      const mealDiv = document.createElement('div');
+      mealDiv.classList.add('meal');
+      mealDiv.innerHTML = `<strong>${meal.name}:</strong> ${meal.dish}<div class="recipe">${meal.recipe}</div>`;
+      dayCard.appendChild(mealDiv);
+    });
+    weekPlan.appendChild(dayCard);
+  });
+}
+
+dietTypes.forEach(dt => dt.addEventListener('click',()=>{
+  dietTypes.forEach(d=>d.classList.remove('active'));
+  dt.classList.add('active');
+  currentType = dt.dataset.type;
+  renderWeek();
+}));
+
+flags.forEach(flag => flag.addEventListener('click',()=>{
+  flags.forEach(f=>f.classList.remove('active'));
+  flag.classList.add('active');
+  currentLang = flag.dataset.lang;
+  renderWeek();
+}));
+
+renderWeek();
+</script>
+</body>
+</html>
