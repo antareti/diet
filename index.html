@@ -1,203 +1,112 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>AI Diet Planner</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {margin:0; font-family:system-ui; background:#0b0c10; color:#e6e7eb;}
-    .app {max-width:1000px; margin:20px auto; display:flex; gap:20px; padding:0 15px; flex-wrap:wrap;}
-    .card {background:#111319; border-radius:18px; padding:20px; box-shadow:0 6px 18px rgba(0,0,0,.35); flex:1 1 300px;}
-    .btn {display:inline-block; padding:12px 18px; border-radius:12px;
-          background:linear-gradient(135deg,#6ee7b7,#60a5fa); color:#0b1220;
-          font-weight:700; cursor:pointer; border:none; margin-top:10px; text-decoration:none; text-align:center;}
-    .btn:hover {opacity:0.9; transform:scale(1.05); transition:0.2s;}
-    input[type=file]{display:none}
-    .preview img {max-width:100%; border-radius:14px; border:1px solid rgba(255,255,255,.1);}
-    .diet {margin-top:12px; line-height:1.5;}
-    h2 {margin-top:0;}
-    #lang-switcher {display:flex; justify-content:center; gap:10px; margin-top:10px;}
-    .flag {
-      cursor: pointer;
-      width: 40px;
-      height: 28px;
-      border-radius:6px;
-      border:2px solid transparent;
-      transition: all 0.3s ease;
-    }
-    .flag:hover {transform: scale(1.2);}
-    .flag.active {border-color:#60a5fa; background: rgba(96,165,250,0.2);}
-    .inputs {margin-top:15px; display:flex; gap:10px; flex-wrap:wrap;}
-    .inputs input {flex:1 1 120px; padding:10px; border-radius:10px; border:1px solid #333; background:#1a1c22; color:#e6e7eb;}
-    #week {margin-top:20px; padding-top:15px; border-top:1px solid #333;}
-    #week h3 {margin-top:0;}
-    @media (max-width:700px){
-      .app {flex-direction:column;}
-      .btn {width:100%; text-align:center;}
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Diet Planner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #000000;
+            color: #E5E5E5;
+        }
+        .header {
+            font-family: 'Playfair Display', serif;
+        }
+        .btn {
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .text-3d {
+            text-shadow: 1px 1px 1px #8B7100, 2px 2px 1px #655200, 3px 3px 1px #4C3C00;
+        }
+    </style>
 </head>
-<body>
-  <header style="text-align:center; margin:20px;">
-    <h1 id="title">AI Diet Planner (online)</h1>
-    <p id="subtitle">Загрузи фото — получи готовую диету</p>
-    <div id="lang-switcher">
-      <img class="flag active" data-lang="ru" src="https://flagcdn.com/w40/ru.png" alt="RU">
-      <img class="flag" data-lang="en" src="https://flagcdn.com/w40/gb.png" alt="EN">
-      <img class="flag" data-lang="ka" src="https://flagcdn.com/w40/ge.png" alt="GE">
+<body class="antialiased leading-relaxed">
+
+    <div class="min-h-screen flex flex-col justify-center items-center py-16 px-4 sm:px-6 lg:px-8">
+        <header class="text-center mb-12">
+            <h1 class="header text-5xl sm:text-6xl lg:text-7xl text-[#FFD700] font-bold mb-4 text-3d">
+                AI Diet Planner
+            </h1>
+            <p class="text-lg sm:text-xl max-w-2xl mx-auto text-[#B8860B]">
+                персональный онлайн-сервис для правильного питания
+            </p>
+        </header>
+
+        <main class="w-full max-w-4xl space-y-12">
+
+            <section class="bg-[#1A1A1A] text-white p-8 sm:p-12 rounded-xl shadow-lg">
+                <p class="text-base sm:text-lg mb-4">
+                    Сегодня здоровое питание стало не просто модным трендом, а важной частью полноценной жизни. Но у большинства людей возникает одна и та же проблема: как составить рацион так, чтобы он был одновременно полезным, вкусным и подходил именно под твои цели?
+                </p>
+                <p class="text-base sm:text-lg">
+                    AI Diet Planner решает эту задачу в два шага. Всё, что тебе нужно — загрузить фото и ввести базовые параметры (рост и вес). Сервис мгновенно рассчитает индекс массы тела и подберёт персональный план питания.
+                </p>
+            </section>
+            
+            <section class="bg-[#1A1A1A] text-white p-8 sm:p-12 rounded-xl shadow-lg">
+                 <h2 class="header text-3xl sm:text-4xl font-bold mb-6 text-[#B8860B]">
+                    Как это работает
+                </h2>
+                <ul class="list-none space-y-4 text-base sm:text-lg">
+                    <li><strong class="text-[#FFD700]">📷 Загрузка фото</strong> — чтобы процесс был наглядным и персонализированным.</li>
+                    <li><strong class="text-[#FFD700]">📏 Ввод параметров</strong> — рост и вес помогают системе определить категорию: набор массы, похудение или поддержание.</li>
+                    <li><strong class="text-[#FFD700]">🤖 Расчёт диеты</strong> — встроенный алгоритм формирует план питания на день и неделю.</li>
+                    <li><strong class="text-[#FFD700]">🗣 Голосовая озвучка</strong> — система озвучивает результат на выбранном языке.</li>
+                </ul>
+            </section>
+
+             <section class="bg-[#1A1A1A] text-white p-8 sm:p-12 rounded-xl shadow-lg">
+                 <h2 class="header text-3xl sm:text-4xl font-bold mb-6 text-[#B8860B]">
+                    Что ты получаешь
+                </h2>
+                <ul class="list-none space-y-4 text-base sm:text-lg">
+                    <li><strong class="text-[#FFD700]">Рацион на день</strong> — расписанный по времени, с калорийностью и блюдами.</li>
+                    <li><strong class="text-[#FFD700]">План на неделю</strong> — готовый список, который легко использовать в реальной жизни.</li>
+                    <li><strong class="text-[#FFD700]">Мультиязычность</strong> — интерфейс и диеты доступны на русском, английском и грузинском языках.</li>
+                    <li><strong class="text-[#FFD700]">Интерактивность</strong> — удобные карточки, современный дизайн и возможность переключать языки одним кликом.</li>
+                    <li><strong class="text-[#FFD700]">Простоту</strong> — всё работает прямо в браузере, без регистрации и сложных настроек.</li>
+                </ul>
+            </section>
+
+             <section class="bg-[#1A1A1A] text-white p-8 sm:p-12 rounded-xl shadow-lg">
+                 <h2 class="header text-3xl sm:text-4xl font-bold mb-6 text-[#B8860B]">
+                    Почему стоит попробовать AI Diet Planner
+                </h2>
+                <ul class="list-none space-y-4 text-base sm:text-lg">
+                    <li><strong class="text-[#FFD700]">⚡ Быстро:</strong> результат за пару секунд.</li>
+                    <li><strong class="text-[#FFD700]">🎯 Точно по целям:</strong> похудение, набор или поддержание формы.</li>
+                    <li><strong class="text-[#FFD700]">🌍 Доступно всем:</strong> работает на компьютере и телефоне, без установки приложений.</li>
+                    <li><strong class="text-[#FFD700]">🔊 Голосовое сопровождение:</strong> можно слушать план, а не только читать.</li>
+                    <li><strong class="text-[#FFD700]">🧑‍🤝‍🧑 Для каждого:</strong> от новичков до тех, кто уже давно следит за своим питанием.</li>
+                </ul>
+            </section>
+            
+            <section class="bg-[#1A1A1A] text-white p-8 sm:p-12 rounded-xl shadow-lg">
+                 <h2 class="header text-3xl sm:text-4xl font-bold mb-6 text-[#B8860B]">
+                    Немного философии
+                </h2>
+                <p class="text-base sm:text-lg mb-4">
+                    Правильное питание — это не только цифры и калории. Это твоя энергия на работе, твой настрой в учёбе, твоё здоровье в будущем. С помощью AI Diet Planner ты получаешь простую систему, которая поможет выстроить базу — а дальше уже ты сам решаешь, как развивать свой путь к лучшей версии себя.
+                </p>
+                <p class="text-base sm:text-lg font-bold text-[#FFD700]">
+                    Начни прямо сейчас: загрузи фото, введи данные — и открой для себя диету, которая создана именно для тебя.
+                </p>
+                <!-- Кнопка перенаправления на app.html -->
+                <div class="text-center mt-8">
+                    <button onclick="location.href='app.html'" 
+                            class="btn px-8 py-4 bg-[#B8860B] text-[#1A1A1A] font-bold rounded-lg hover:bg-[#a67a0a] hover:text-white">
+                        Начать
+                    </button>
+                </div>
+            </section>
+
+        </main>
     </div>
-    <a href="diets.html" class="btn">Перейти к диетам</a>
-  </header>
 
-  <main class="app">
-    <section class="card">
-      <h2 id="uploadTitle">Загрузка фото</h2>
-      <label class="btn" for="file" id="uploadBtn">Выбрать фото</label>
-      <input type="file" id="file" accept="image/*">
-      <div class="preview" style="margin-top:16px">
-        <img id="img" hidden>
-      </div>
-      <div class="inputs">
-        <input type="number" id="height" placeholder="Рост (см)">
-        <input type="number" id="weight" placeholder="Вес (кг)">
-      </div>
-      <button class="btn" id="analyze">Назначить диету</button>
-    </section>
-
-    <section class="card">
-      <h2 id="resultTitle">Твоя диета</h2>
-      <div id="result" class="diet">Здесь появится план питания</div>
-      <div id="week"></div>
-    </section>
-  </main>
-
-  <div style="max-width:300px; margin:30px auto; padding:15px; background:#111319; border-radius:18px; box-shadow:0 6px 18px rgba(0,0,0,.35); text-align:center; font-family:system-ui;">
-    <div style="color:#60a5fa; font-weight:bold; margin-bottom:10px;">Free Visitors</div>
-    <div id="animated-counter" style="display:flex; justify-content:center; gap:2px; font-size:28px; font-weight:700;"></div>
-    <a href='http://www.freevisitorcounters.com' target="_blank" style="display:block; margin-top:10px; color:#60a5fa; text-decoration:none; font-size:12px;">Powered by FreeVisitorCounters</a>
-  </div>
-
-  <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=9b7eba1f58bc50b78c2890451ccdcd526dab15be'></script>
-  <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1387540/t/6"></script>
-
-  <script>
-    const counterContainer = document.getElementById('animated-counter');
-
-    function animateDigits(newNumber) {
-      counterContainer.innerHTML = '';
-      newNumber.toString().split('').forEach(digit=>{
-        const span = document.createElement('span');
-        span.innerText = digit;
-        span.style.display = 'inline-block';
-        span.style.background = 'linear-gradient(135deg,#6ee7b7,#60a5fa)';
-        span.style.webkitBackgroundClip = 'text';
-        span.style.color = 'transparent';
-        span.style.transition = 'transform 0.3s ease';
-        counterContainer.appendChild(span);
-        setTimeout(()=>{ span.style.transform = 'translateY(-10px)'; }, 50);
-        setTimeout(()=>{ span.style.transform = 'translateY(0)'; }, 300);
-      });
-    }
-
-    function updateAnimatedCounter() {
-      const fvcEl = document.querySelector('div[id^="fvc_counter"]');
-      if(fvcEl){
-        const count = parseInt(fvcEl.innerText.replace(/\D/g,'')) || 0;
-        animateDigits(count);
-      }
-    }
-
-    setInterval(updateAnimatedCounter, 1000);
-    window.addEventListener('load', updateAnimatedCounter);
-
-    const fileInput = document.getElementById('file');
-    const img = document.getElementById('img');
-    const analyzeBtn = document.getElementById('analyze');
-    const resultEl = document.getElementById('result');
-    const weekEl = document.getElementById('week');
-    const flags = document.querySelectorAll('.flag');
-    let currentLang = "ru";
-
-    const diets = {
-      ru: {
-        loss: {title:"Похудение", text:"08:00 – Завтрак: овсянка с ягодами (300 ккал)\n13:00 – Обед: куриная грудка + салат (450 ккал)\n19:00 – Ужин: салат с тунцом (350 ккал)",
-          week:["Понедельник: овощной суп, салат","Вторник: рыба на пару, гречка","Среда: куриная грудка, овощи","Четверг: омлет, салат","Пятница: творог, фрукты","Суббота: индейка, овощи","Воскресенье: лёгкий суп, овощи"]},
-        gain: {title:"Набор массы", text:"08:00 – Завтрак: омлет из 4 яиц, хлеб (500 ккал)\n13:30 – Обед: рис, говядина, овощи (700 ккал)\n20:00 – Ужин: паста с курицей (600 ккал)",
-          week:["Понедельник: курица, рис","Вторник: говядина, картофель","Среда: омлет, тосты","Четверг: паста, курица","Пятница: рыба, рис","Суббота: индейка, макароны","Воскресенье: пицца домашняя"]},
-        keep: {title:"Поддержание веса", text:"07:30 – Завтрак: йогурт с мюсли (350 ккал)\n13:00 – Обед: курица, гречка, овощи (550 ккал)\n19:30 – Ужин: рыба + салат (450 ккал)",
-          week:["Понедельник: каша, фрукты","Вторник: рыба, овощи","Среда: курица, салат","Четверг: омлет, овощи","Пятница: йогурт, орехи","Суббота: индейка, овощи","Воскресенье: овощной суп"]}
-      },
-      en: {
-        loss: {title:"Weight Loss", text:"08:00 – Breakfast: oatmeal with berries (300 kcal)\n13:00 – Lunch: grilled chicken + salad (450 kcal)\n19:00 – Dinner: tuna salad (350 kcal)",
-          week:["Mon: vegetable soup, salad","Tue: steamed fish, buckwheat","Wed: chicken breast, veggies","Thu: omelet, salad","Fri: cottage cheese, fruits","Sat: turkey, veggies","Sun: light soup, salad"]},
-        gain: {title:"Muscle Gain", text:"08:00 – Breakfast: 4-egg omelet, bread (500 kcal)\n13:30 – Lunch: rice, beef, veggies (700 kcal)\n20:00 – Dinner: pasta with chicken (600 kcal)",
-          week:["Mon: chicken & rice","Tue: beef & potatoes","Wed: omelet & toasts","Thu: pasta & chicken","Fri: fish & rice","Sat: turkey & pasta","Sun: homemade pizza"]},
-        keep: {title:"Maintain Weight", text:"07:30 – Breakfast: yogurt with muesli (350 kcal)\n13:00 – Lunch: chicken, buckwheat, veggies (550 kcal)\n19:30 – Dinner: fish + salad (450 kcal)",
-          week:["Mon: porridge, fruits","Tue: fish & veggies","Wed: chicken & salad","Thu: omelet & veggies","Fri: yogurt & nuts","Sat: turkey & veggies","Sun: vegetable soup"]}
-      },
-      ka: {
-        loss: {title:"წონის დაკლება", text:"08:00 – საუზმე: შვრიის ფაფა ხილით (300 კკალ)\n13:00 – სადილი: ქათმის ფილე + სალათი (450 კკალ)\n19:00 – ვახშამი: თინუსის სალათი (350 კკალ)",
-          week:["ორშაბათი: ბოსტნეულის სუპი, სალათი","სამშაბათი: თევზი ბოსტნეულით","ოთხშაბათი: ქათმის ფილე, ბოსტნეული","ხუთშაბათი: ომლეტი, სალათი","პარასკევი: ხაჭო, ხილი","შაბათი: ინდაური, ბოსტნეული","კვირა: მსუბუქი სუპი, ბოსტნეული"]},
-        gain: {title:"კუნთების მასის გაზრდა", text:"08:00 – საუზმე: ომლეტი 4 კვერცხით, პური (500 კკალ)\n13:30 – სადილი: ბრინჯი, ძროხის ხორცი, ბოსტნეული (700 კკალ)\n20:00 – ვახშამი: პასტა ქათმით (600 კკალ)",
-          week:["ორშაბათი: ქათამი, ბრინჯი","სამშაბათი: ძროხის ხორცი, კარტოფილი","ოთხშაბათი: ომლეტი","ხუთშაბათი: პასტა ქათმით","პარასკევი: თევზი","შაბათი: ინდაური","კვირა: სახლის პიცა"]},
-        keep: {title:"წონის შენარჩუნება", text:"07:30 – საუზმე: იოგურტი მიუსლით (350 კკალ)\n13:00 – სადილი: ქათამი, წიწიბურა, ბოსტნეული (550 კკალ)\n19:30 – ვახშამი: თევზი + სალათი (450 კკალ)",
-          week:["ორშაბათი: ფაფა, ხილი","სამშაბათი: თევზი, ბოსტნეული","ოთხშაბათი: ქათამი, სალათი","ხუთშაბათი: ომლეტი, ბოსტნეული","პარასკევი: იოგურტი, თხილი","შაბათი: ინდაური, ბოსტნეული","კვირა: ბოსტნეულის სუპი"]}
-      }
-    };
-
-    const uiText = {
-      ru:{title:"AI Diet Planner (online)",subtitle:"Загрузи фото — получи готовую диету",uploadTitle:"Загрузка фото",uploadBtn:"Выбрать фото",analyze:"Назначить диету",resultTitle:"Твоя диета",empty:"Здесь появится план питания",week:"Диета недели"},
-      en:{title:"AI Diet Planner (online)",subtitle:"Upload a photo — get your diet plan",uploadTitle:"Upload Photo",uploadBtn:"Choose Photo",analyze:"Generate Diet",resultTitle:"Your Diet",empty:"Your diet plan will appear here",week:"Weekly Diet"},
-      ka:{title:"AI დიეტის პლანერი",subtitle:"ატვირთე ფოტო — მიიღე დიეტა",uploadTitle:"ფოტოს ატვირთვა",uploadBtn:"ფოტო",analyze:"დიეტის გენერაცია",resultTitle:"შენი დიეტა",empty:"აქ გამოჩნდება დიეტა",week:"კვირის დიეტა"}
-    };
-
-    fileInput.addEventListener('change', e=>{
-      const f = e.target.files[0];
-      if(f){ img.src = URL.createObjectURL(f); img.hidden = false; }
-    });
-
-    function speak(text, lang) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = lang==="ru"?"ru-RU":lang==="en"?"en-US":"ka-GE";
-      speechSynthesis.cancel();
-      speechSynthesis.speak(utterance);
-    }
-
-    analyzeBtn.addEventListener('click', ()=>{
-      const h = parseFloat(document.getElementById("height").value);
-      const w = parseFloat(document.getElementById("weight").value);
-      let dietType;
-      if(h && w){
-        const bmi = w/((h/100)**2);
-        if(bmi<18.5) dietType="gain";
-        else if(bmi>25) dietType="loss";
-        else dietType="keep";
-      } else {
-        const types=["loss","gain","keep"];
-        dietType=types[Math.floor(Math.random()*3)];
-      }
-      const d = diets[currentLang][dietType];
-      resultEl.innerHTML = `<h3>${d.title}</h3>${d.text.replace(/\n/g,"<br>")}`;
-      weekEl.innerHTML = `<h3>${uiText[currentLang].week}</h3><ul>${d.week.map(x=>"<li>"+x+"</li>").join("")}</ul>`;
-      speak(`${d.title}. ${d.text}`, currentLang);
-    });
-
-    function setLanguage(lang){
-      currentLang=lang;
-      const t=uiText[lang];
-      document.getElementById("title").innerText=t.title;
-      document.getElementById("subtitle").innerText=t.subtitle;
-      document.getElementById("uploadTitle").innerText=t.uploadTitle;
-      document.getElementById("uploadBtn").innerText=t.uploadBtn;
-      document.getElementById("analyze").innerText=t.analyze;
-      document.getElementById("resultTitle").innerText=t.resultTitle;
-      resultEl.innerText=t.empty;
-      weekEl.innerHTML="";
-      flags.forEach(f=>f.classList.toggle('active',f.dataset.lang===lang));
-    }
-
-    flags.forEach(flag=>flag.addEventListener('click',()=>setLanguage(flag.dataset.lang)));
-    setLanguage('ru');
-  </script>
 </body>
 </html>
