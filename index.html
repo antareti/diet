@@ -15,11 +15,17 @@
     .diet {margin-top:12px; line-height:1.5;}
     h2 {margin-top:0;}
     #lang-switcher {display:inline-flex; gap:10px; justify-content:center; margin-top:10px;}
-    .flag {cursor: pointer; padding: 6px 10px; border-radius: 10px; border: 2px solid transparent; transition: all 0.3s ease; font-size: 24px;}
+    .flag {
+      cursor: pointer;
+      padding: 6px 10px;
+      border-radius: 10px;
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+      font-size: 24px;
+    }
     .flag:hover {transform: scale(1.2);}
     .flag.active {border-color: #60a5fa; background: rgba(96,165,250,0.2);}
-    input.number {margin:5px 0; padding:6px; border-radius:6px; border:none; width:100%;}
-    .week-plan {margin-top:20px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.2);}
+    #weekPlan {margin-top:20px; padding-top:10px; border-top:1px solid rgba(255,255,255,.2);}
   </style>
 </head>
 <body>
@@ -42,8 +48,6 @@
       <div class="preview" style="margin-top:16px">
         <img id="img" hidden>
       </div>
-      <input type="number" id="height" class="number" placeholder="Рост (см)">
-      <input type="number" id="weight" class="number" placeholder="Вес (кг)">
       <button class="btn" id="analyze">Назначить диету</button>
     </section>
 
@@ -51,6 +55,7 @@
     <section class="card">
       <h2 id="resultTitle">Твоя диета</h2>
       <div id="result" class="diet">Здесь появится план питания</div>
+      <div id="weekPlan"></div>
     </section>
   </main>
 
@@ -59,23 +64,72 @@
     const img = document.getElementById('img');
     const analyzeBtn = document.getElementById('analyze');
     const resultEl = document.getElementById('result');
+    const weekPlanEl = document.getElementById('weekPlan');
     const flags = document.querySelectorAll('.flag');
-    const heightInput = document.getElementById('height');
-    const weightInput = document.getElementById('weight');
 
     let currentLang = "ru";
 
+    // Диеты
     const diets = {
       ru: [
-        {title: "Похудение", text: "08:00 – Завтрак: овсянка с ягодами и зелёный чай (300 ккал)\n13:00 – Обед: куриная грудка на гриле + овощной салат (450 ккал)\n19:00 – Ужин: салат с тунцом и овощами (350 ккал)\nИтого: около 1100 ккал."},
-        {title: "Набор массы", text: "08:00 – Завтрак: омлет из четырёх яиц и цельнозерновой хлеб, кофе (500 ккал)\n13:30 – Обед: рис, говядина и овощи на пару (700 ккал)\n20:00 – Ужин: паста с курицей и соусом (600 ккал)\nИтого: около 1800 ккал."},
-        {title: "Поддержание веса", text: "07:30 – Завтрак: йогурт с мюсли и фруктами (350 ккал)\n13:00 – Обед: курица, гречка и овощи (550 ккал)\n19:30 – Ужин: рыба на пару и салат из свежих овощей (450 ккал)\nИтого: около 1350 ккал."}
+        {title: "Похудение", text: "08:00 – Завтрак: овсянка с ягодами и зелёный чай (300 ккал)\n13:00 – Обед: куриная грудка на гриле + овощной салат (450 ккал)\n19:00 – Ужин: салат с тунцом и овощами (350 ккал)\nИтого: около 1100 ккал.", week: "Понедельник: лёгкий завтрак, овощи\nВторник: курица + салат\nСреда: рыба + овощи\nЧетверг: овсянка, суп\nПятница: овощной день\nСуббота: курица гриль\nВоскресенье: лёгкий ужин"},
+        {title: "Набор массы", text: "08:00 – Завтрак: омлет из четырёх яиц и хлеб (500 ккал)\n13:30 – Обед: рис, говядина и овощи (700 ккал)\n20:00 – Ужин: паста с курицей и соусом (600 ккал)\nИтого: около 1800 ккал.", week: "Понедельник: мясо + рис\nВторник: паста + курица\nСреда: яйца + хлеб\nЧетверг: говядина + овощи\nПятница: рыба + рис\nСуббота: паста + мясо\nВоскресенье: курица + овощи"},
+        {title: "Поддержание веса", text: "07:30 – Завтрак: йогурт с мюсли и фруктами (350 ккал)\n13:00 – Обед: курица, гречка и овощи (550 ккал)\n19:30 – Ужин: рыба на пару и салат (450 ккал)\nИтого: около 1350 ккал.", week: "Понедельник: йогурт + мюсли\nВторник: гречка + курица\nСреда: рыба + овощи\nЧетверг: суп + салат\nПятница: йогурт + фрукты\nСуббота: курица + овощи\nВоскресенье: лёгкий ужин"}
       ],
       en: [
-        {title: "Weight Loss", text: "08:00 – Breakfast: oatmeal with berries and green tea (300 kcal)\n13:00 – Lunch: grilled chicken breast with vegetable salad (450 kcal)\n19:00 – Dinner: tuna salad with vegetables (350 kcal)\nTotal: about 1100 kcal."},
-        {title: "Muscle Gain", text: "08:00 – Breakfast: omelet of 4 eggs with whole grain bread, coffee (500 kcal)\n13:30 – Lunch: rice with beef and steamed vegetables (700 kcal)\n20:00 – Dinner: pasta with chicken and sauce (600 kcal)\nTotal: about 1800 kcal."},
-        {title: "Maintain Weight", text: "07:30 – Breakfast: yogurt with muesli and fruits (350 kcal)\n13:00 – Lunch: chicken, buckwheat and vegetables (550 kcal)\n19:30 – Dinner: steamed fish with fresh vegetable salad (450 kcal)\nTotal: about 1350 kcal."}
+        {title: "Weight Loss", text: "08:00 – Breakfast: oatmeal with berries and green tea (300 kcal)\n13:00 – Lunch: grilled chicken breast with vegetable salad (450 kcal)\n19:00 – Dinner: tuna salad with vegetables (350 kcal)\nTotal: about 1100 kcal.", week: "Mon: oatmeal, tea\nTue: chicken + salad\nWed: fish + veggies\nThu: oatmeal, soup\nFri: veggie day\nSat: grilled chicken\nSun: light dinner"},
+        {title: "Muscle Gain", text: "08:00 – Breakfast: omelet of 4 eggs with bread (500 kcal)\n13:30 – Lunch: rice with beef and vegetables (700 kcal)\n20:00 – Dinner: pasta with chicken and sauce (600 kcal)\nTotal: about 1800 kcal.", week: "Mon: meat + rice\nTue: pasta + chicken\nWed: eggs + bread\nThu: beef + veggies\nFri: fish + rice\nSat: pasta + meat\nSun: chicken + veggies"},
+        {title: "Maintain Weight", text: "07:30 – Breakfast: yogurt with muesli and fruits (350 kcal)\n13:00 – Lunch: chicken, buckwheat and vegetables (550 kcal)\n19:30 – Dinner: fish with fresh vegetable salad (450 kcal)\nTotal: about 1350 kcal.", week: "Mon: yogurt + muesli\nTue: buckwheat + chicken\nWed: fish + veggies\nThu: soup + salad\nFri: yogurt + fruits\nSat: chicken + veggies\nSun: light dinner"}
       ],
       ka: [
-        {title: "წონის დაკლება", text: "08:00 – საუზმე: შვრია კენკრით და მწვანე ჩაი (300 კკალ)\n13:00 – სადილი: შემწვარი ქათმის ფილე ბოსტნეულის სალათით (450 კკალ)\n19:00 – ვახშამი: თინუსის სალათი ბოსტნეულით (350 კკალ)\nჯამში: დაახლოებით 1100 კკალ."},
-        {title: "მასის მომატება", text: "08:00 – საუზმე: 4 კვერცხის ომლეტი და მარცვლოვანი პური, ყავა (500 კკალ)\n13:30 – სადილი: ბრინჯი, საქონლის ხორცი და ორთქლზე მოხარშული ბოსტნეული (700 კკალ)\n20:00 – ვახშამი: პასტა ქათმით და სოუსით (600 კკალ)\nჯამში: დაახლოე
+        {title: "წონის დაკლება", text: "08:00 – საუზმე: შვრია კენკრით და მწვანე ჩაი (300 კკალ)\n13:00 – სადილი: ქათმის ფილე ბოსტნეულის სალათით (450 კკალ)\n19:00 – ვახშამი: თინუსის სალათი ბოსტნეულით (350 კკალ)\nჯამში: დაახლოებით 1100 კკალ.", week: "ორშაბათი: შვრია + ჩაი\nსამშაბათი: ქათამი + სალათი\nოთხშაბათი: თევზი + ბოსტნეული\nხუთშაბათი: სუპი + სალათი\nპარასკევი: ბოსტნეულის დღე\nშაბათი: გრილი ქათამი\nკვირა: მსუბუქი ვახშამი"},
+        {title: "მასის მომატება", text: "08:00 – საუზმე: 4 კვერცხის ომლეტი და პური (500 კკალ)\n13:30 – სადილი: ბრინჯი, ძროხის ხორცი და ბოსტნეული (700 კკალ)\n20:00 – ვახშამი: პასტა ქათმით და სოუსით (600 კკალ)\nჯამში: დაახლოებით 1800 კკალ.", week: "ორშაბათი: ხორცი + ბრინჯი\nსამშაბათი: პასტა + ქათამი\nოთხშაბათი: კვერცხი + პური\nხუთშაბათი: ძროხა + ბოსტნეული\nპარასკევი: თევზი + ბრინჯი\nშაბათი: პასტა + ხორცი\nკვირა: ქათამი + ბოსტნეული"},
+        {title: "წონის შენარჩუნება", text: "07:30 – საუზმე: იოგურტი მიუსლით და ხილით (350 კკალ)\n13:00 – სადილი: ქათამი, წიწიბურა და ბოსტნეული (550 კკალ)\n19:30 – ვახშამი: თევზი და სალათი (450 კკალ)\nჯამში: დაახლოებით 1350 კკალ.", week: "ორშაბათი: იოგურტი + მიუსლი\nსამშაბათი: წიწიბურა + ქათამი\nოთხშაბათი: თევზი + ბოსტნეული\nხუთშაბათი: სუპი + სალათი\nპარასკევი: იოგურტი + ხილი\nშაბათი: ქათამი + ბოსტნეული\nკვირა: მსუბუქი ვახშამი"}
+      ]
+    };
+
+    // UI тексты
+    const uiText = {
+      ru: {title: "AI Diet Planner (online)", subtitle: "Загрузи фото — получи готовую диету", uploadTitle: "Загрузка фото", uploadBtn: "Выбрать фото", analyze: "Назначить диету", resultTitle: "Твоя диета", empty: "Здесь появится план питания", week: "Диета недели"},
+      en: {title: "AI Diet Planner (online)", subtitle: "Upload a photo — get your diet plan", uploadTitle: "Upload Photo", uploadBtn: "Choose Photo", analyze: "Generate Diet", resultTitle: "Your Diet", empty: "Your diet plan will appear here", week: "Weekly Plan"},
+      ka: {title: "AI Diet Planner (online)", subtitle: "ატვირთე ფოტო — მიიღე დიეტის გეგმა", uploadTitle: "ფოტოს ატვირთვა", uploadBtn: "აირჩიე ფოტო", analyze: "დიეტის დაგეგმვა", resultTitle: "შენი დიეტა", empty: "აქ გამოჩნდება დიეტის გეგმა", week: "კვირის დიეტა"}
+    };
+
+    fileInput.addEventListener('change', e=>{
+      const f = e.target.files[0];
+      if(f){ img.src = URL.createObjectURL(f); img.hidden = false; }
+    });
+
+    function speak(text, lang) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = lang === "ru" ? "ru-RU" : lang === "en" ? "en-US" : "ka-GE";
+      speechSynthesis.cancel();
+      speechSynthesis.speak(utterance);
+    }
+
+    analyzeBtn.addEventListener('click', ()=>{
+      const d = diets[currentLang][Math.floor(Math.random()*diets[currentLang].length)];
+      resultEl.innerHTML = `<h3>${d.title}</h3>${d.text.replace(/\n/g,"<br>")}`;
+      weekPlanEl.innerHTML = `<h4>${uiText[currentLang].week}</h4><p>${d.week.replace(/\n/g,"<br>")}</p>`;
+      speak(`${d.title}. ${d.text}`, currentLang);
+    });
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      const t = uiText[currentLang];
+      document.getElementById("title").innerText = t.title;
+      document.getElementById("subtitle").innerText = t.subtitle;
+      document.getElementById("uploadTitle").innerText = t.uploadTitle;
+      document.getElementById("uploadBtn").innerText = t.uploadBtn;
+      document.getElementById("analyze").innerText = t.analyze;
+      document.getElementById("resultTitle").innerText = t.resultTitle;
+      resultEl.innerText = t.empty;
+      weekPlanEl.innerHTML = "";
+      flags.forEach(f => f.classList.toggle('active', f.dataset.lang === lang));
+    }
+
+    flags.forEach(flag => flag.addEventListener('click', ()=>setLanguage(flag.dataset.lang)));
+    setLanguage('ru');
+  </script>
+</body>
+</html>
