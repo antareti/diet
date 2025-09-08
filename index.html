@@ -14,29 +14,34 @@
     .preview img {max-width:100%; border-radius:14px; border:1px solid rgba(255,255,255,.1);}
     .diet {margin-top:12px; line-height:1.5;}
     h2 {margin-top:0;}
+    select {padding:6px 10px; border-radius:8px; border:none; margin-bottom:10px;}
   </style>
 </head>
 <body>
   <header style="text-align:center; margin:20px;">
-    <h1>AI Diet Planner (online)</h1>
-    <p>Загрузи фото — получи готовую диету</p>
+    <h1 id="title">AI Diet Planner (online)</h1>
+    <p id="subtitle">Загрузи фото — получи готовую диету</p>
+    <select id="lang">
+      <option value="ru" selected>Русский</option>
+      <option value="en">English</option>
+    </select>
   </header>
 
   <main class="app">
     <!-- Левая панель: загрузка -->
     <section class="card">
-      <h2>Загрузка фото</h2>
-      <label class="btn" for="file">Выбрать фото</label>
+      <h2 id="uploadTitle">Загрузка фото</h2>
+      <label class="btn" for="file" id="uploadBtn">Выбрать фото</label>
       <input type="file" id="file" accept="image/*">
       <div class="preview" style="margin-top:16px">
         <img id="img" hidden>
       </div>
-      <button class="btn" id="analyze" style="margin-top:16px">Назначить диету</button>
+      <button class="btn" id="analyze">Назначить диету</button>
     </section>
 
     <!-- Правая панель: результат -->
     <section class="card">
-      <h2>Твоя диета</h2>
+      <h2 id="resultTitle">Твоя диета</h2>
       <div id="result" class="diet">Здесь появится план питания</div>
     </section>
   </main>
@@ -46,21 +51,61 @@
     const img = document.getElementById('img');
     const analyzeBtn = document.getElementById('analyze');
     const resultEl = document.getElementById('result');
+    const langSelect = document.getElementById('lang');
 
-    const diets = [
-      {
-        title: "Похудение",
-        text: "08:00 – Завтрак: овсянка с ягодами и зелёный чай (300 ккал)\n13:00 – Обед: куриная грудка на гриле + овощной салат (450 ккал)\n19:00 – Ужин: салат с тунцом и овощами (350 ккал)\nИтого: около 1100 ккал."
+    let currentLang = "ru";
+
+    const diets = {
+      ru: [
+        {
+          title: "Похудение",
+          text: "08:00 – Завтрак: овсянка с ягодами и зелёный чай (300 ккал)\n13:00 – Обед: куриная грудка на гриле + овощной салат (450 ккал)\n19:00 – Ужин: салат с тунцом и овощами (350 ккал)\nИтого: около 1100 ккал."
+        },
+        {
+          title: "Набор массы",
+          text: "08:00 – Завтрак: омлет из четырёх яиц и цельнозерновой хлеб, кофе (500 ккал)\n13:30 – Обед: рис, говядина и овощи на пару (700 ккал)\n20:00 – Ужин: паста с курицей и соусом (600 ккал)\nИтого: около 1800 ккал."
+        },
+        {
+          title: "Поддержание веса",
+          text: "07:30 – Завтрак: йогурт с мюсли и фруктами (350 ккал)\n13:00 – Обед: курица, гречка и овощи (550 ккал)\n19:30 – Ужин: рыба на пару и салат из свежих овощей (450 ккал)\nИтого: около 1350 ккал."
+        }
+      ],
+      en: [
+        {
+          title: "Weight Loss",
+          text: "08:00 – Breakfast: oatmeal with berries and green tea (300 kcal)\n13:00 – Lunch: grilled chicken breast with vegetable salad (450 kcal)\n19:00 – Dinner: tuna salad with vegetables (350 kcal)\nTotal: about 1100 kcal."
+        },
+        {
+          title: "Muscle Gain",
+          text: "08:00 – Breakfast: omelet of 4 eggs with whole grain bread, coffee (500 kcal)\n13:30 – Lunch: rice with beef and steamed vegetables (700 kcal)\n20:00 – Dinner: pasta with chicken and sauce (600 kcal)\nTotal: about 1800 kcal."
+        },
+        {
+          title: "Maintain Weight",
+          text: "07:30 – Breakfast: yogurt with muesli and fruits (350 kcal)\n13:00 – Lunch: chicken, buckwheat and vegetables (550 kcal)\n19:30 – Dinner: steamed fish with fresh vegetable salad (450 kcal)\nTotal: about 1350 kcal."
+        }
+      ]
+    };
+
+    const uiText = {
+      ru: {
+        title: "AI Diet Planner (online)",
+        subtitle: "Загрузи фото — получи готовую диету",
+        uploadTitle: "Загрузка фото",
+        uploadBtn: "Выбрать фото",
+        analyze: "Назначить диету",
+        resultTitle: "Твоя диета",
+        empty: "Здесь появится план питания"
       },
-      {
-        title: "Набор массы",
-        text: "08:00 – Завтрак: омлет из четырёх яиц и цельнозерновой хлеб, кофе (500 ккал)\n13:30 – Обед: рис, говядина и овощи на пару (700 ккал)\n20:00 – Ужин: паста с курицей и соусом (600 ккал)\nИтого: около 1800 ккал."
-      },
-      {
-        title: "Поддержание веса",
-        text: "07:30 – Завтрак: йогурт с мюсли и фруктами (350 ккал)\n13:00 – Обед: курица, гречка и овощи (550 ккал)\n19:30 – Ужин: рыба на пару и салат из свежих овощей (450 ккал)\nИтого: около 1350 ккал."
+      en: {
+        title: "AI Diet Planner (online)",
+        subtitle: "Upload a photo — get your diet plan",
+        uploadTitle: "Upload Photo",
+        uploadBtn: "Choose Photo",
+        analyze: "Generate Diet",
+        resultTitle: "Your Diet",
+        empty: "Your diet plan will appear here"
       }
-    ];
+    };
 
     fileInput.addEventListener('change', e=>{
       const f = e.target.files[0];
@@ -70,17 +115,29 @@
       }
     });
 
-    function speak(text) {
+    function speak(text, lang) {
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = "ru-RU"; // русский голос
-      speechSynthesis.cancel(); // остановить предыдущую озвучку
+      utterance.lang = lang === "ru" ? "ru-RU" : "en-US";
+      speechSynthesis.cancel();
       speechSynthesis.speak(utterance);
     }
 
     analyzeBtn.addEventListener('click', ()=>{
-      const d = diets[Math.floor(Math.random()*diets.length)];
+      const d = diets[currentLang][Math.floor(Math.random()*diets[currentLang].length)];
       resultEl.innerHTML = `<h3>${d.title}</h3>${d.text.replace(/\n/g,"<br>")}`;
-      speak(`${d.title}. ${d.text}`);
+      speak(`${d.title}. ${d.text}`, currentLang);
+    });
+
+    langSelect.addEventListener("change", ()=>{
+      currentLang = langSelect.value;
+      const t = uiText[currentLang];
+      document.getElementById("title").innerText = t.title;
+      document.getElementById("subtitle").innerText = t.subtitle;
+      document.getElementById("uploadTitle").innerText = t.uploadTitle;
+      document.getElementById("uploadBtn").innerText = t.uploadBtn;
+      document.getElementById("analyze").innerText = t.analyze;
+      document.getElementById("resultTitle").innerText = t.resultTitle;
+      resultEl.innerText = t.empty;
     });
   </script>
 </body>
