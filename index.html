@@ -11,6 +11,15 @@
           background:linear-gradient(135deg,#6ee7b7,#60a5fa); color:#0b1220;
           font-weight:700; cursor:pointer; border:none;}
     input[type=file]{display:none}
+    input[type=number]{
+      background: #0b1220;
+      border: 1px solid #333;
+      color: #e6e7eb;
+      border-radius: 8px;
+      padding: 8px 12px;
+      width: calc(50% - 24px);
+      margin-right: 12px;
+    }
     .preview img {max-width:100%; border-radius:14px; border:1px solid rgba(255,255,255,.1);}
     .diet {margin-top:12px; line-height:1.5; white-space: pre-wrap;}
     h2 {margin-top:0;}
@@ -25,8 +34,9 @@
     }
     .flag:hover {transform: scale(1.2);}
     .flag.active {border-color: #60a5fa; background: rgba(96,165,250,0.2);}
+    #bmi-inputs {margin-top: 15px;}
     .alert {color: #f44336; margin-top: 10px;}
- </style>
+  </style>
 </head>
 <body>
   <header style="text-align:center; margin:20px;">
@@ -46,7 +56,12 @@
       <div class="preview" style="margin-top:16px">
         <img id="img" hidden>
       </div>
-      <button class="btn" id="analyze">Назначить диету</button>
+     <div id="bmi-inputs">
+        <h3 id="bmiTitle">Или введи данные для расчета ИМТ</h3>
+        <input type="number" id="height" placeholder="Рост, см">
+        <input type="number" id="weight" placeholder="Вес, кг">
+     </div>
+      <button class="btn" id="analyze" style="margin-top:16px;">Назначить диету</button>
       <div id="alert-message" class="alert"></div>
     </section>
 
@@ -62,30 +77,28 @@
     const analyzeBtn = document.getElementById('analyze');
     const resultEl = document.getElementById('result');
     const flags = document.querySelectorAll('.flag');
+    const heightInput = document.getElementById('height');
+    const weightInput = document.getElementById('weight');
     const alertMessageEl = document.getElementById('alert-message');
 
-    let currentLang = "ru";
+    let currentLang = "ru";
 
-    const diets = {
-        ru: [
-            { title: "Похудение", text: "08:00 – Завтрак: овсянка с ягодами и зелёный чай (300 ккал)\n13:00 – Обед: куриная грудка на гриле + овощной салат (450 ккал)\n19:00 – Ужин: салат с тунцом и овощами (350 ккал)\nИтого: около 1100 ккал."},
-            { title: "Набор массы", text: "08:00 – Завтрак: омлет из четырёх яиц и цельнозерновой хлеб, кофе (500 ккал)\n13:30 – Обед: рис, говядина и овощи на пару (700 ккал)\n20:00 – Ужин: паста с курицей и соусом (600 ккал)\nИтого: около 1800 ккал."},
-            { title: "Поддержание веса", text: "07:30 – Завтрак: йогурт с мюсли и фруктами (350 ккал)\n13:00 – Обед: курица, гречка и овощи (550 ккал)\n19:30 – Ужин: рыба на пару и салат из свежих овощей (450 ккал)\nИтого: около 1350 ккал."},
-            { title: "Вегетарианская диета", text: "08:30 – Завтрак: тост с авокадо и семенами чиа (350 ккал)\n13:00 – Обед: чечевичный суп с цельнозерновым хлебом (400 ккал)\n19:00 – Ужин: салат из киноа с овощами и нутом (450 ккал)\nИтого: около 1200 ккал."},
-            { title: "Высокобелковая диета", text: "08:00 – Завтрак: омлет с сыром и шпинатом (400 ккал)\n13:00 – Обед: запеченная куриная грудка с брокколи (500 ккал)\n19:30 – Ужин: нежирный творог с ягодами и орехами (300 ккал)\nИтого: около 1200 ккал."}
-        ],
-        en: [
-            { title: "Weight Loss", text: "08:00 – Breakfast: oatmeal with berries and green tea (300 kcal)\n13:00 – Lunch: grilled chicken breast with vegetable salad (450 kcal)\n19:00 – Dinner: tuna salad with vegetables (350 kcal)\nTotal: about 1100 kcal."},
-            { title: "Muscle Gain", text: "08:00 – Breakfast: omelet of 4 eggs with whole grain bread, coffee (500 kcal)\n13:30 – Lunch: rice with beef and steamed vegetables (700 kcal)\n20:00 – Dinner: pasta with chicken and sauce (600 kcal)\nTotal: about 1800 kcal."},
-            { title: "Maintain Weight", text: "07:30 – Breakfast: yogurt with muesli and fruits (350 kcal)\n13:00 – Lunch: chicken, buckwheat and vegetables (550 kcal)\n19:30 – Dinner: steamed fish with fresh vegetable salad (450 kcal)\nTotal: about 1350 kcal."},
-            { title: "Vegetarian Diet", text: "08:30 – Breakfast: avocado toast with chia seeds (350 kcal)\n13:00 – Lunch: lentil soup with whole-grain bread (400 kcal)\n19:00 – Dinner: quinoa salad with vegetables and chickpeas (450 kcal)\nTotal: about 1200 kcal."},
-            { title: "High Protein Diet", text: "08:00 – Breakfast: omelet with cheese and spinach (400 kcal)\n13:00 – Lunch: baked chicken breast with broccoli (500 kcal)\n19:30 – Dinner: low-fat cottage cheese with berries and nuts (300 kcal)\nTotal: about 1200 kcal."}
-        ]
-    };
+    const diets = {
+      ru: [
+        { id: 'weightLoss', title: "Похудение", text: "08:00 – Завтрак: овсянка с ягодами и зелёный чай (300 ккал)\n13:00 – Обед: куриная грудка на гриле + овощной салат (450 ккал)\n19:00 – Ужин: салат с тунцом и овощами (350 ккал)\nИтого: около 1100 ккал."},
+        { id: 'muscleGain', title: "Набор массы", text: "08:00 – Завтрак: омлет из четырёх яиц и цельнозерновой хлеб, кофе (500 ккал)\n13:30 – Обед: рис, говядина и овощи на пару (700 ккал)\n20:00 – Ужин: паста с курицей и соусом (600 ккал)\nИтого: около 1800 ккал."},
+        { id: 'maintainWeight', title: "Поддержание веса", text: "07:30 – Завтрак: йогурт с мюсли и фруктами (350 ккал)\n13:00 – Обед: курица, гречка и овощи (550 ккал)\n19:30 – Ужин: рыба на пару и салат из свежих овощей (450 ккал)\nИтого: около 1350 ккал."}
+      ],
+      en: [
+        { id: 'weightLoss', title: "Weight Loss", text: "08:00 – Breakfast: oatmeal with berries and green tea (300 kcal)\n13:00 – Lunch: grilled chicken breast with vegetable salad (450 kcal)\n19:00 – Dinner: tuna salad with vegetables (350 kcal)\nTotal: about 1100 kcal."},
+        { id: 'muscleGain', title: "Muscle Gain", text: "08:00 – Breakfast: omelet of 4 eggs with whole grain bread, coffee (500 kcal)\n13:30 – Lunch: rice with beef and steamed vegetables (700 kcal)\n20:00 – Dinner: pasta with chicken and sauce (600 kcal)\nTotal: about 1800 kcal."},
+        { id: 'maintainWeight', title: "Maintain Weight", text: "07:30 – Breakfast: yogurt with muesli and fruits (350 kcal)\n13:00 – Lunch: chicken, buckwheat and vegetables (550 kcal)\n19:30 – Dinner: steamed fish with fresh vegetable salad (450 kcal)\nTotal: about 1350 kcal."}
+      ]
+    };
 
     const uiText = {
-      ru: {title: "AI Diet Planner (online)", subtitle: "Загрузи фото — получи готовую диету", uploadTitle: "Загрузка фото", uploadBtn: "Выбрать фото", analyze: "Назначить диету", resultTitle: "Твоя диета", empty: "Здесь появится план питания", noPhotoAlert: "Пожалуйста, выберите фото!"},
-      en: {title: "AI Diet Planner (online)", subtitle: "Upload a photo — get your diet plan", uploadTitle: "Upload Photo", uploadBtn: "Choose Photo", analyze: "Generate Diet", resultTitle: "Your Diet", empty: "Your diet plan will appear here", noPhotoAlert: "Please select a photo!"}
+      ru: {title: "AI Diet Planner (online)", subtitle: "Загрузи фото — получи готовую диету", uploadTitle: "Загрузка фото", uploadBtn: "Выбрать фото", analyze: "Назначить диету", resultTitle: "Твоя диета", empty: "Здесь появится план питания", bmiTitle: "Или введи данные для расчета ИМТ", noPhotoAlert: "Пожалуйста, выберите фото!", noResultAlert: "Не удалось определить диету по ИМТ. Попробуйте еще раз."},
+      en: {title: "AI Diet Planner (online)", subtitle: "Upload a photo — get your diet plan", uploadTitle: "Upload Photo", uploadBtn: "Choose Photo", analyze: "Generate Diet", resultTitle: "Your Diet", empty: "Your diet plan will appear here", bmiTitle: "Or enter data for BMI calculation", noPhotoAlert: "Please select a photo!", noResultAlert: "Could not determine diet based on BMI. Please try again."}
     };
 
     fileInput.addEventListener('change', e=>{
@@ -100,18 +113,42 @@
       speechSynthesis.speak(utterance);
     }
 
+    function calculateBMI(height, weight) {
+        if (!height || !weight) return null;
+        const heightM = height / 100;
+        return weight / (heightM * heightM);
+    }
+
+    function getDietByBMI(bmi) {
+        if (bmi === null) return null;
+        if (bmi < 18.5) return 'muscleGain';
+        if (bmi >= 18.5 && bmi < 25) return 'maintainWeight';
+        if (bmi >= 25) return 'weightLoss';
+        return null;
+    }
+
     analyzeBtn.addEventListener('click', ()=>{
         alertMessageEl.innerText = "";
-        if (img.hidden) {
-            alertMessageEl.innerText = uiText[currentLang].noPhotoAlert;
-            speak(uiText[currentLang].noPhotoAlert, currentLang);
-            return;
+        const height = parseFloat(heightInput.value);
+        const weight = parseFloat(weightInput.value);
+        const bmi = calculateBMI(height, weight);
+        let diet = null;
+
+        if (bmi) {
+            const dietId = getDietByBMI(bmi);
+            diet = diets[currentLang].find(d => d.id === dietId);
+        } else {
+            // Если ИМТ не посчитан, выдаем случайную диету
+            diet = diets[currentLang][Math.floor(Math.random() * diets[currentLang].length)];
         }
 
-        // Выбираем случайную диету из всей расширенной базы
-      const d = diets[currentLang][Math.floor(Math.random() * diets[currentLang].length)];
-      resultEl.innerHTML = `<h3>${d.title}</h3>${d.text.replace(/\n/g,"<br>")}`;
-      speak(`${d.title}. ${d.text}`, currentLang);
+        if (diet) {
+            resultEl.innerHTML = `<h3>${diet.title}</h3>${diet.text.replace(/\n/g,"<br>")}`;
+            speak(`${diet.title}. ${diet.text}`, currentLang);
+        } else {
+            resultEl.innerHTML = uiText[currentLang].noResultAlert;
+            speak(uiText[currentLang].noResultAlert, currentLang);
+        }
     });
 
     function setLanguage(lang) {
@@ -124,6 +161,9 @@
       document.getElementById("analyze").innerText = t.analyze;
       document.getElementById("resultTitle").innerText = t.resultTitle;
       resultEl.innerText = t.empty;
+      document.getElementById("bmiTitle").innerText = t.bmiTitle;
+      heightInput.placeholder = lang === 'ru' ? "Рост, см" : "Height, cm";
+      weightInput.placeholder = lang === 'ru' ? "Вес, кг" : "Weight, kg";
       alertMessageEl.innerText = "";
       flags.forEach(f => f.classList.toggle('active', f.dataset.lang === lang));
     }
