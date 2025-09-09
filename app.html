@@ -71,14 +71,6 @@
     </section>
   </main>
 
-  <!-- Картинка 9.png с подписью -->
-  <div style="text-align:center; margin:30px auto; max-width:600px;">
-    <img src="9.png" alt="AI Diet Planner" style="max-width:100%; border-radius:16px; box-shadow:0 6px 18px rgba(0,0,0,.35);">
-    <p style="margin-top:10px; font-size:18px; font-weight:bold; color:#60a5fa;">
-      Твоя персональная диета с AI
-    </p>
-  </div>
-
   <div style="max-width:300px; margin:30px auto; padding:15px; background:#111319; border-radius:18px; box-shadow:0 6px 18px rgba(0,0,0,.35); text-align:center; font-family:system-ui;">
     <div style="color:#60a5fa; font-weight:bold; margin-bottom:10px;">Free Visitors</div>
     <div id="animated-counter" style="display:flex; justify-content:center; gap:2px; font-size:28px; font-weight:700;"></div>
@@ -88,9 +80,124 @@
   <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=9b7eba1f58bc50b78c2890451ccdcd526dab15be'></script>
   <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1387540/t/6"></script>
 
-  <!-- твой JS остаётся нетронутым -->
   <script>
-    /* ... весь твой скрипт без изменений ... */
+    const counterContainer = document.getElementById('animated-counter');
+
+    function animateDigits(newNumber) {
+      counterContainer.innerHTML = '';
+      newNumber.toString().split('').forEach(digit=>{
+        const span = document.createElement('span');
+        span.innerText = digit;
+        span.style.display = 'inline-block';
+        span.style.background = 'linear-gradient(135deg,#6ee7b7,#60a5fa)';
+        span.style.webkitBackgroundClip = 'text';
+        span.style.color = 'transparent';
+        span.style.transition = 'transform 0.3s ease';
+        counterContainer.appendChild(span);
+        setTimeout(()=>{ span.style.transform = 'translateY(-10px)'; }, 50);
+        setTimeout(()=>{ span.style.transform = 'translateY(0)'; }, 300);
+      });
+    }
+
+    function updateAnimatedCounter() {
+      const fvcEl = document.querySelector('div[id^="fvc_counter"]');
+      if(fvcEl){
+        const count = parseInt(fvcEl.innerText.replace(/\D/g,'')) || 0;
+        animateDigits(count);
+      }
+    }
+
+    setInterval(updateAnimatedCounter, 1000);
+    window.addEventListener('load', updateAnimatedCounter);
+
+    const fileInput = document.getElementById('file');
+    const img = document.getElementById('img');
+    const analyzeBtn = document.getElementById('analyze');
+    const resultEl = document.getElementById('result');
+    const weekEl = document.getElementById('week');
+    const flags = document.querySelectorAll('.flag');
+    let currentLang = "ru";
+
+    const diets = {
+      ru: {
+        loss: {title:"Похудение", text:"08:00 – Завтрак: овсянка с ягодами (300 ккал)\n13:00 – Обед: куриная грудка + салат (450 ккал)\n19:00 – Ужин: салат с тунцом (350 ккал)",
+          week:["Понедельник: овощной суп, салат","Вторник: рыба на пару, гречка","Среда: куриная грудка, овощи","Четверг: омлет, салат","Пятница: творог, фрукты","Суббота: индейка, овощи","Воскресенье: лёгкий суп, овощи"]},
+        gain: {title:"Набор массы", text:"08:00 – Завтрак: омлет из 4 яиц, хлеб (500 ккал)\n13:30 – Обед: рис, говядина, овощи (700 ккал)\n20:00 – Ужин: паста с курицей (600 ккал)",
+          week:["Понедельник: курица, рис","Вторник: говядина, картофель","Среда: омлет, тосты","Четверг: паста, курица","Пятница: рыба, рис","Суббота: индейка, макароны","Воскресенье: пицца домашняя"]},
+        keep: {title:"Поддержание веса", text:"07:30 – Завтрак: йогурт с мюсли (350 ккал)\n13:00 – Обед: курица, гречка, овощи (550 ккал)\n19:30 – Ужин: рыба + салат (450 ккал)",
+          week:["Понедельник: каша, фрукты","Вторник: рыба, овощи","Среда: курица, салат","Четверг: омлет, овощи","Пятница: йогурт, орехи","Суббота: индейка, овощи","Воскресенье: овощной суп"]}
+      },
+      en: {
+        loss: {title:"Weight Loss", text:"08:00 – Breakfast: oatmeal with berries (300 kcal)\n13:00 – Lunch: grilled chicken + salad (450 kcal)\n19:00 – Dinner: tuna salad (350 kcal)",
+          week:["Mon: vegetable soup, salad","Tue: steamed fish, buckwheat","Wed: chicken breast, veggies","Thu: omelet, salad","Fri: cottage cheese, fruits","Sat: turkey, veggies","Sun: light soup, salad"]},
+        gain: {title:"Muscle Gain", text:"08:00 – Breakfast: 4-egg omelet, bread (500 kcal)\n13:30 – Lunch: rice, beef, veggies (700 kcal)\n20:00 – Dinner: pasta with chicken (600 kcal)",
+          week:["Mon: chicken & rice","Tue: beef & potatoes","Wed: omelet & toasts","Thu: pasta & chicken","Fri: fish & rice","Sat: turkey & pasta","Sun: homemade pizza"]},
+        keep: {title:"Maintain Weight", text:"07:30 – Breakfast: yogurt with muesli (350 kcal)\n13:00 – Lunch: chicken, buckwheat, veggies (550 kcal)\n19:30 – Dinner: fish + salad (450 kcal)",
+          week:["Mon: porridge, fruits","Tue: fish & veggies","Wed: chicken & salad","Thu: omelet & veggies","Fri: yogurt & nuts","Sat: turkey & veggies","Sun: vegetable soup"]}
+      },
+      ka: {
+        loss: {title:"წონის დაკლება", text:"08:00 – საუზმე: შვრიის ფაფა ხილით (300 კკალ)\n13:00 – სადილი: ქათმის ფილე + სალათი (450 კკალ)\n19:00 – ვახშამი: თინუსის სალათი (350 კკალ)",
+          week:["ორშაბათი: ბოსტნეულის სუპი, სალათი","სამშაბათი: თევზი ბოსტნეულით","ოთხშაბათი: ქათმის ფილე, ბოსტნეული","ხუთშაბათი: ომლეტი, სალათი","პარასკევი: ხაჭო, ხილი","შაბათი: ინდაური, ბოსტნეული","კვირა: მსუბუქი სუპი, ბოსტნეული"]},
+        gain: {title:"კუნთების მასის გაზრდა", text:"08:00 – საუზმე: ომლეტი 4 კვერცხით, პური (500 კკალ)\n13:30 – სადილი: ბრინჯი, ძროხის ხორცი, ბოსტნეული (700 კკალ)\n20:00 – ვახშამი: პასტა ქათმით (600 კკალ)",
+          week:["ორშაბათი: ქათამი, ბრინჯი","სამშაბათი: ძროხის ხორცი, კარტოფილი","ოთხშაბათი: ომლეტი","ხუთშაბათი: პასტა ქათმით","პარასკევი: თევზი","შაბათი: ინდაური","კვირა: სახლის პიცა"]},
+        keep: {title:"წონის შენარჩუნება", text:"07:30 – საუზმე: იოგურტი მიუსლით (350 კკალ)\n13:00 – სადილი: ქათამი, წიწიბურა, ბოსტნეული (550 კკალ)\n19:30 – ვახშამი: თევზი + სალათი (450 კკალ)",
+          week:["ორშაბათი: ფაფა, ხილი","სამშაბათი: თევზი, ბოსტნეული","ოთხშაბათი: ქათამი, სალათი","ხუთშაბათი: ომლეტი, ბოსტნეული","პარასკევი: იოგურტი, თხილი","შაბათი: ინდაური, ბოსტნეული","კვირა: ბოსტნეულის სუპი"]}
+      }
+    };
+
+    const uiText = {
+      ru:{title:"AI Diet Planner (online)",subtitle:"Загрузи фото — получи готовую диету",uploadTitle:"Загрузка фото",uploadBtn:"Выбрать фото",analyze:"Назначить диету",resultTitle:"Твоя диета",empty:"Здесь появится план питания",week:"Диета недели"},
+      en:{title:"AI Diet Planner (online)",subtitle:"Upload a photo — get your diet plan",uploadTitle:"Upload Photo",uploadBtn:"Choose Photo",analyze:"Generate Diet",resultTitle:"Your Diet",empty:"Your diet plan will appear here",week:"Weekly Diet"},
+      ka:{title:"AI დიეტის პლანერი",subtitle:"ატვირთე ფოტო — მიიღე დიეტა",uploadTitle:"ფოტოს ატვირთვა",uploadBtn:"ფოტო",analyze:"დიეტის გენერაცია",resultTitle:"შენი დიეტა",empty:"აქ გამოჩნდება დიეტა",week:"კვირის დიეტა"}
+    };
+
+    fileInput.addEventListener('change', e=>{
+      const f = e.target.files[0];
+      if(f){ img.src = URL.createObjectURL(f); img.hidden = false; }
+    });
+
+    function speak(text, lang) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = lang==="ru"?"ru-RU":lang==="en"?"en-US":"ka-GE";
+      speechSynthesis.cancel();
+      speechSynthesis.speak(utterance);
+    }
+
+    analyzeBtn.addEventListener('click', ()=>{
+      const h = parseFloat(document.getElementById("height").value);
+      const w = parseFloat(document.getElementById("weight").value);
+      let dietType;
+      if(h && w){
+        const bmi = w/((h/100)**2);
+        if(bmi<18.5) dietType="gain";
+        else if(bmi>25) dietType="loss";
+        else dietType="keep";
+      } else {
+        const types=["loss","gain","keep"];
+        dietType=types[Math.floor(Math.random()*3)];
+      }
+      const d = diets[currentLang][dietType];
+      resultEl.innerHTML = `<h3>${d.title}</h3>${d.text.replace(/\n/g,"<br>")}`;
+      weekEl.innerHTML = `<h3>${uiText[currentLang].week}</h3><ul>${d.week.map(x=>"<li>"+x+"</li>").join("")}</ul>`;
+      speak(`${d.title}. ${d.text}`, currentLang);
+    });
+
+    function setLanguage(lang){
+      currentLang=lang;
+      const t=uiText[lang];
+      document.getElementById("title").innerText=t.title;
+      document.getElementById("subtitle").innerText=t.subtitle;
+      document.getElementById("uploadTitle").innerText=t.uploadTitle;
+      document.getElementById("uploadBtn").innerText=t.uploadBtn;
+      document.getElementById("analyze").innerText=t.analyze;
+      document.getElementById("resultTitle").innerText=t.resultTitle;
+      resultEl.innerText=t.empty;
+      weekEl.innerHTML="";
+      flags.forEach(f=>f.classList.toggle('active',f.dataset.lang===lang));
+    }
+
+    flags.forEach(flag=>flag.addEventListener('click',()=>setLanguage(flag.dataset.lang)));
+    setLanguage('ru');
   </script>
 </body>
 </html>
