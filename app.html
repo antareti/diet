@@ -5,8 +5,11 @@
   <title>AI Diet Planner</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {margin:0; font-family:system-ui; background:#0b0c10; color:#e6e7eb;}
-    .app {max-width:1000px; margin:20px auto; display:flex; gap:20px; padding:0 15px; flex-wrap:wrap;}
+    body {margin:0; font-family:system-ui; background:#0b0c10; color:#e6e7eb; display:flex; justify-content:center;}
+    .container {max-width:1200px; width:100%; display:flex; gap:20px; margin:20px;}
+    .side-img {flex:0 0 200px; display:flex; flex-direction:column; gap:20px;}
+    .side-img img {width:100%; border-radius:14px; border:1px solid rgba(255,255,255,.1);}
+    .app {flex:1; display:flex; gap:20px; flex-wrap:wrap;}
     .card {background:#111319; border-radius:18px; padding:20px; box-shadow:0 6px 18px rgba(0,0,0,.35); flex:1 1 300px;}
     .btn {display:inline-block; padding:12px 18px; border-radius:12px;
           background:linear-gradient(135deg,#6ee7b7,#60a5fa); color:#0b1220;
@@ -31,9 +34,11 @@
     .inputs input {flex:1 1 120px; padding:10px; border-radius:10px; border:1px solid #333; background:#1a1c22; color:#e6e7eb;}
     #week {margin-top:20px; padding-top:15px; border-top:1px solid #333;}
     #week h3 {margin-top:0;}
-    @media (max-width:700px){
-      .app {flex-direction:column;}
-      .btn {width:100%; text-align:center;}
+    @media (max-width:1100px){
+      .container {flex-direction:column; align-items:center;}
+      .side-img {flex-direction:row; width:100%; justify-content:space-between;}
+      .side-img img {width:48%;}
+      .app {width:100%;}
     }
 
     /* Сделать весь текст золотым и с 3D-эффектом */
@@ -72,40 +77,42 @@
   </style>
 </head>
 <body>
-  <header style="text-align:center; margin:20px;">
-    <h1 id="title">AI Diet Planner (online)</h1>
-    <p id="subtitle">Загрузи фото — получи готовую диету</p>
-    <div id="lang-switcher">
-      <img class="flag active" data-lang="ru" src="https://flagcdn.com/w40/ru.png" alt="RU">
-      <img class="flag" data-lang="en" src="https://flagcdn.com/w40/gb.png" alt="EN">
-      <img class="flag" data-lang="ka" src="https://flagcdn.com/w40/ge.png" alt="GE">
+  <div class="container">
+    <!-- Левая картинка -->
+    <div class="side-img">
+      <img src="11.png" alt="11">
     </div>
-    <a href="diets.html" class="btn">Перейти к диетам</a>
-  </header>
 
-  <main class="app">
-    <section class="card">
-      <h2 id="uploadTitle">Загрузка фото</h2>
-      <label class="btn" for="file" id="uploadBtn">Выбрать фото</label>
-      <input type="file" id="file" accept="image/*">
-      <div class="preview" style="margin-top:16px; display:flex; justify-content:space-between;">
-        <img id="img11" src="11.png" alt="11" style="max-width:48%; border-radius:14px; border:1px solid rgba(255,255,255,.1);">
-        <img id="img10" src="10.png" alt="10" style="max-width:48%; border-radius:14px; border:1px solid rgba(255,255,255,.1);">
-      </div>
-      <div class="inputs">
-        <input type="number" id="height" placeholder="Рост (см)">
-        <input type="number" id="weight" placeholder="Вес (кг)">
-      </div>
-      <button class="btn" id="analyze">Назначить диету</button>
-    </section>
+    <!-- Основное приложение -->
+    <main class="app">
+      <section class="card">
+        <h2 id="uploadTitle">Загрузка фото</h2>
+        <label class="btn" for="file" id="uploadBtn">Выбрать фото</label>
+        <input type="file" id="file" accept="image/*">
+        <div class="preview" style="margin-top:16px">
+          <img id="img" hidden>
+        </div>
+        <div class="inputs">
+          <input type="number" id="height" placeholder="Рост (см)">
+          <input type="number" id="weight" placeholder="Вес (кг)">
+        </div>
+        <button class="btn" id="analyze">Назначить диету</button>
+      </section>
 
-    <section class="card">
-      <h2 id="resultTitle">Твоя диета</h2>
-      <div id="result" class="diet">Здесь появится план питания</div>
-      <div id="week"></div>
-    </section>
-  </main>
+      <section class="card">
+        <h2 id="resultTitle">Твоя диета</h2>
+        <div id="result" class="diet">Здесь появится план питания</div>
+        <div id="week"></div>
+      </section>
+    </main>
 
+    <!-- Правая картинка -->
+    <div class="side-img">
+      <img src="10.png" alt="10">
+    </div>
+  </div>
+
+  <!-- Счётчик и footer -->
   <div style="max-width:300px; margin:30px auto; padding:15px; background:#111319; border-radius:18px; box-shadow:0 6px 18px rgba(0,0,0,.35); text-align:center; font-family:system-ui;">
     <div style="color:#60a5fa; font-weight:bold; margin-bottom:10px;">Free Visitors</div>
     <div id="animated-counter" style="display:flex; justify-content:center; gap:2px; font-size:28px; font-weight:700;"></div>
