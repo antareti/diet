@@ -35,6 +35,40 @@
       .app {flex-direction:column;}
       .btn {width:100%; text-align:center;}
     }
+
+    /* Сделать весь текст золотым и с 3D-эффектом */
+    :root {
+      --gold: #FFD700;
+      --gold-1: #c78f00;
+      --gold-2: #9a6900;
+      --gold-3: #6a4500;
+    }
+    * {
+      color: var(--gold) !important;
+      text-shadow:
+        1px 1px 0 var(--gold-1),
+        2px 2px 0 var(--gold-2),
+        3px 3px 0 var(--gold-3),
+        0 6px 18px rgba(0,0,0,0.6);
+    }
+    /* интерактивные элементы (кнопки, ссылки, поля) */
+    .btn, a, button, input, textarea, select, label {
+      color: var(--gold) !important;
+      text-shadow: 1px 1px 0 var(--gold-1), 2px 2px 0 var(--gold-2), 3px 3px 0 var(--gold-3), 0 6px 18px rgba(0,0,0,0.6) !important;
+    }
+    input::placeholder, textarea::placeholder {
+      color: var(--gold) !important;
+      opacity: 1;
+    }
+    /* Особая обработка для счётчика, чтобы убрать перекрывающий градиент и оставить золото */
+    #animated-counter span {
+      background: none !important;
+      -webkit-background-clip: unset !important;
+      background-clip: unset !important;
+      -webkit-text-fill-color: var(--gold) !important;
+      color: var(--gold) !important;
+      text-shadow: 1px 1px 0 var(--gold-1), 2px 2px 0 var(--gold-2), 3px 3px 0 var(--gold-3), 0 6px 18px rgba(0,0,0,0.6) !important;
+    }
   </style>
 </head>
 <body>
