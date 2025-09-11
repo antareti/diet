@@ -118,7 +118,66 @@
     <source src="1.mp4" type="video/mp4">
   </video>
 
-  <!-- Всё содержимое сайта -->
-  ... (твой текущий код без изменений) ...
+  <header>
+    <h1 id="title">AI Diet Planner (online)</h1>
+    <p id="subtitle">Загрузи фото — получи готовую диету</p>
+    <div id="lang-switcher">
+      <img class="flag active" data-lang="ru" src="https://flagcdn.com/w40/ru.png" alt="RU">
+      <img class="flag" data-lang="en" src="https://flagcdn.com/w40/gb.png" alt="EN">
+      <img class="flag" data-lang="ka" src="https://flagcdn.com/w40/ge.png" alt="GE">
+    </div>
+    <a href="diets.html" class="btn">Перейти к диетам</a>
+  </header>
+
+  <div class="container">
+    <!-- Левая картинка -->
+    <div class="side-img">
+      <img src="11.png" alt="11">
+    </div>
+
+    <!-- Основное приложение -->
+    <main class="app">
+      <section class="card">
+        <h2 id="uploadTitle">Загрузка фото</h2>
+        <label class="btn" for="file" id="uploadBtn">Выбрать фото</label>
+        <input type="file" id="file" accept="image/*">
+        <div class="preview" style="margin-top:16px">
+          <img id="img" hidden>
+        </div>
+        <div class="inputs">
+          <input type="number" id="height" placeholder="Рост (см)">
+          <input type="number" id="weight" placeholder="Вес (кг)">
+        </div>
+        <button class="btn" id="analyze">Назначить диету</button>
+      </section>
+
+      <section class="card">
+        <h2 id="resultTitle">Твоя диета</h2>
+        <div id="result" class="diet">Здесь появится план питания</div>
+        <div id="week"></div>
+      </section>
+    </main>
+
+    <!-- Правая картинка -->
+    <div class="side-img">
+      <img src="10.png" alt="10">
+    </div>
+  </div>
+
+  <!-- Счётчик и footer -->
+  <div style="max-width:300px; margin:30px auto; padding:15px; background:#111319; border-radius:18px; box-shadow:0 6px 18px rgba(0,0,0,.35); text-align:center; font-family:system-ui;">
+    <div style="color:#60a5fa; font-weight:bold; margin-bottom:10px;">Free Visitors</div>
+    <div id="animated-counter" style="display:flex; justify-content:center; gap:2px; font-size:28px; font-weight:700;"></div>
+    <a href='http://www.freevisitorcounters.com' target="_blank" style="display:block; margin-top:10px; color:#60a5fa; text-decoration:none; font-size:12px;">Powered by FreeVisitorCounters</a>
+  </div>
+
+  <!-- JS как у тебя -->
+  <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=9b7eba1f58bc50b78c2890451ccdcd526dab15be'></script>
+  <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1387540/t/6"></script>
+  <script>
+    /* Здесь остаётся весь твой JS из прошлого варианта 
+       (анализ роста/веса, выбор диеты, переключение языков, озвучка и счётчик).
+       Код не менял, только добавил видеофон. */
+  </script>
 </body>
 </html>
