@@ -17,7 +17,6 @@
       z-index: 1;
     }
 
-    /* Видеофон */
     video.bg {
       position: fixed;
       top: 0;
@@ -28,11 +27,7 @@
       z-index: -1;
     }
 
-    header {
-      text-align:center; 
-      margin:20px;
-    }
-
+    header {text-align:center; margin:20px;}
     .container {
       max-width:1400px; 
       width:100%; 
@@ -41,27 +36,23 @@
       margin:20px; 
       justify-content:center;
     }
-
     .side-img {
       flex:0 0 250px; 
       display:flex; 
       flex-direction:column; 
       gap:20px;
     }
-
     .side-img img {
       width:100%; 
       border-radius:14px; 
       border:1px solid rgba(255,255,255,.1);
     }
-
     .app {
       flex:1; 
       display:flex; 
       gap:20px; 
       flex-wrap:wrap;
     }
-
     .card {
       background:#111319; 
       border-radius:18px; 
@@ -69,7 +60,6 @@
       box-shadow:0 6px 18px rgba(0,0,0,.35); 
       flex:1 1 300px;
     }
-
     .btn {
       display:inline-block; 
       padding:12px 18px; 
@@ -83,7 +73,6 @@
       text-decoration:none; 
       text-align:center;
     }
-
     .btn:hover {opacity:0.9; transform:scale(1.05); transition:0.2s;}
     input[type=file]{display:none}
     .preview img {max-width:100%; border-radius:14px; border:1px solid rgba(255,255,255,.1);}
@@ -109,11 +98,9 @@
     * {color: var(--gold) !important; text-shadow:1px 1px 0 var(--gold-1),2px 2px 0 var(--gold-2),3px 3px 0 var(--gold-3),0 6px 18px rgba(0,0,0,0.6);}
     .btn, a, button, input, textarea, select, label {color: var(--gold) !important; text-shadow:1px 1px 0 var(--gold-1),2px 2px 0 var(--gold-2),3px 3px 0 var(--gold-3),0 6px 18px rgba(0,0,0,0.6) !important;}
     input::placeholder, textarea::placeholder {color: var(--gold) !important; opacity:1;}
-    #animated-counter span {background:none !important; -webkit-background-clip: unset !important; background-clip: unset !important; -webkit-text-fill-color: var(--gold) !important; color: var(--gold) !important; text-shadow: 1px 1px 0 var(--gold-1),2px 2px 0 var(--gold-2),3px 3px 0 var(--gold-3),0 6px 18px rgba(0,0,0,0.6) !important;}
   </style>
 </head>
 <body>
-  <!-- Видеофон -->
   <video autoplay muted loop class="bg">
     <source src="1.mp4" type="video/mp4">
   </video>
@@ -130,12 +117,8 @@
   </header>
 
   <div class="container">
-    <!-- Левая картинка -->
-    <div class="side-img">
-      <img src="11.png" alt="11">
-    </div>
+    <div class="side-img"><img src="11.png" alt="11"></div>
 
-    <!-- Основное приложение -->
     <main class="app">
       <section class="card">
         <h2 id="uploadTitle">Загрузка фото</h2>
@@ -158,26 +141,95 @@
       </section>
     </main>
 
-    <!-- Правая картинка -->
-    <div class="side-img">
-      <img src="10.png" alt="10">
-    </div>
+    <div class="side-img"><img src="10.png" alt="10"></div>
   </div>
 
-  <!-- Счётчик и footer -->
   <div style="max-width:300px; margin:30px auto; padding:15px; background:#111319; border-radius:18px; box-shadow:0 6px 18px rgba(0,0,0,.35); text-align:center; font-family:system-ui;">
     <div style="color:#60a5fa; font-weight:bold; margin-bottom:10px;">Free Visitors</div>
     <div id="animated-counter" style="display:flex; justify-content:center; gap:2px; font-size:28px; font-weight:700;"></div>
     <a href='http://www.freevisitorcounters.com' target="_blank" style="display:block; margin-top:10px; color:#60a5fa; text-decoration:none; font-size:12px;">Powered by FreeVisitorCounters</a>
   </div>
 
-  <!-- JS как у тебя -->
-  <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=9b7eba1f58bc50b78c2890451ccdcd526dab15be'></script>
-  <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1387540/t/6"></script>
   <script>
-    /* Здесь остаётся весь твой JS из прошлого варианта 
-       (анализ роста/веса, выбор диеты, переключение языков, озвучка и счётчик).
-       Код не менял, только добавил видеофон. */
+    const fileInput = document.getElementById('file');
+    const img = document.getElementById('img');
+    const analyzeBtn = document.getElementById('analyze');
+    const resultEl = document.getElementById('result');
+    const weekEl = document.getElementById('week');
+    const flags = document.querySelectorAll('.flag');
+    let currentLang = "ru";
+
+    const diets = {
+      ru: {
+        loss: {title:"Похудение", text:"08:00 – Завтрак: овсянка с ягодами (300 ккал)\n13:00 – Обед: куриная грудка + салат (450 ккал)\n19:00 – Ужин: салат с тунцом (350 ккал)",
+          week:["Понедельник: овощной суп, салат","Вторник: рыба на пару, гречка","Среда: куриная грудка, овощи","Четверг: омлет, салат","Пятница: творог, фрукты","Суббота: индейка, овощи","Воскресенье: лёгкий суп, овощи"]},
+        gain: {title:"Набор массы", text:"08:00 – Завтрак: омлет из 4 яиц, хлеб (500 ккал)\n13:30 – Обед: рис, говядина, овощи (700 ккал)\n20:00 – Ужин: паста с курицей (600 ккал)",
+          week:["Понедельник: курица, рис","Вторник: говядина, картофель","Среда: омлет, тосты","Четверг: паста, курица","Пятница: рыба, рис","Суббота: индейка, макароны","Воскресенье: пицца домашняя"]},
+        keep: {title:"Поддержание веса", text:"07:30 – Завтрак: йогурт с мюсли (350 ккал)\n13:00 – Обед: курица, гречка, овощи (550 ккал)\n19:30 – Ужин: рыба + салат (450 ккал)",
+          week:["Понедельник: каша, фрукты","Вторник: рыба, овощи","Среда: курица, салат","Четверг: омлет, овощи","Пятница: йогурт, орехи","Суббота: индейка, овощи","Воскресенье: овощной суп"]}
+      },
+      en: {
+        loss: {title:"Weight Loss", text:"08:00 – Breakfast: oatmeal with berries (300 kcal)\n13:00 – Lunch: grilled chicken + salad (450 kcal)\n19:00 – Dinner: tuna salad (350 kcal)",
+          week:["Mon: vegetable soup, salad","Tue: steamed fish, buckwheat","Wed: chicken breast, veggies","Thu: omelet, salad","Fri: cottage cheese, fruits","Sat: turkey, veggies","Sun: light soup, salad"]},
+        gain: {title:"Muscle Gain", text:"08:00 – Breakfast: 4-egg omelet, bread (500 kcal)\n13:30 – Lunch: rice, beef, veggies (700 kcal)\n20:00 – Dinner: pasta with chicken (600 kcal)",
+          week:["Mon: chicken & rice","Tue: beef & potatoes","Wed: omelet & toasts","Thu: pasta & chicken","Fri: fish & rice","Sat: turkey & pasta","Sun: homemade pizza"]},
+        keep: {title:"Maintain Weight", text:"07:30 – Breakfast: yogurt with muesli (350 kcal)\n13:00 – Lunch: chicken, buckwheat, veggies (550 kcal)\n19:30 – Dinner: fish + salad (450 kcal)",
+          week:["Mon: porridge, fruits","Tue: fish & veggies","Wed: chicken & salad","Thu: omelet & veggies","Fri: yogurt & nuts","Sat: turkey & veggies","Sun: vegetable soup"]}
+      }
+    };
+
+    const uiText = {
+      ru:{title:"AI Diet Planner (online)",subtitle:"Загрузи фото — получи готовую диету",uploadTitle:"Загрузка фото",uploadBtn:"Выбрать фото",analyze:"Назначить диету",resultTitle:"Твоя диета",empty:"Здесь появится план питания",week:"Диета недели"},
+      en:{title:"AI Diet Planner (online)",subtitle:"Upload a photo — get your diet plan",uploadTitle:"Upload Photo",uploadBtn:"Choose Photo",analyze:"Generate Diet",resultTitle:"Your Diet",empty:"Your diet plan will appear here",week:"Weekly Diet"},
+      ka:{title:"AI დიეტის პლანერი",subtitle:"ატვირთე ფოტო — მიიღე დიეტა",uploadTitle:"ფოტოს ატვირთვა",uploadBtn:"ფოტო",analyze:"დიეტის გენერაცია",resultTitle:"შენი დიეტა",empty:"აქ გამოჩნდება დიეტა",week:"კვირის დიეტა"}
+    };
+
+    fileInput.addEventListener('change', e=>{
+      const f = e.target.files[0];
+      if(f){ img.src = URL.createObjectURL(f); img.hidden = false; }
+    });
+
+    function speak(text, lang) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = lang==="ru"?"ru-RU":lang==="en"?"en-US":"ka-GE";
+      speechSynthesis.cancel();
+      speechSynthesis.speak(utterance);
+    }
+
+    analyzeBtn.addEventListener('click', ()=>{
+      const h = parseFloat(document.getElementById("height").value);
+      const w = parseFloat(document.getElementById("weight").value);
+      let dietType;
+      if(h && w){
+        const bmi = w/((h/100)**2);
+        if(bmi<18.5) dietType="gain";
+        else if(bmi>25) dietType="loss";
+        else dietType="keep";
+      } else {
+        const types=["loss","gain","keep"];
+        dietType=types[Math.floor(Math.random()*3)];
+      }
+      const d = diets[currentLang][dietType];
+      resultEl.innerHTML = `<h3>${d.title}</h3>${d.text.replace(/\n/g,"<br>")}`;
+      weekEl.innerHTML = `<h3>${uiText[currentLang].week}</h3><ul>${d.week.map(x=>"<li>"+x+"</li>").join("")}</ul>`;
+      speak(`${d.title}. ${d.text}`, currentLang);
+    });
+
+    function setLanguage(lang){
+      currentLang=lang;
+      const t=uiText[lang];
+      document.getElementById("title").innerText=t.title;
+      document.getElementById("subtitle").innerText=t.subtitle;
+      document.getElementById("uploadTitle").innerText=t.uploadTitle;
+      document.getElementById("uploadBtn").innerText=t.uploadBtn;
+      document.getElementById("analyze").innerText=t.analyze;
+      document.getElementById("resultTitle").innerText=t.resultTitle;
+      resultEl.innerText=t.empty;
+      weekEl.innerHTML="";
+      flags.forEach(f=>f.classList.toggle('active',f.dataset.lang===lang));
+    }
+    flags.forEach(flag=>flag.addEventListener('click',()=>setLanguage(flag.dataset.lang)));
+    setLanguage('ru');
   </script>
 </body>
 </html>
