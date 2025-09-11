@@ -18,14 +18,23 @@
     }
 
     /* Видеофон */
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: url('https://www.coverr.co/s3/mp4/coverr-calm-morning-1576.mp4') no-repeat center center;
-      background-size: cover;
-      z-index: -2;
+    body:<!-- Вставь эту часть в <body> -->
+<video autoplay muted loop id="bgVideo">
+  <source src="https://www.coverr.co/s3/mp4/coverr-calm-morning-1576.mp4" type="video/mp4">
+</video>
+
+<style>
+  video#bgVideo {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -2;
+  }
+</style>
+
     }
     video#bgVideo {
       position: fixed;
@@ -245,3 +254,4 @@
   </script>
 </body>
 </html>
+
