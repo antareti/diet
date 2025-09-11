@@ -1,387 +1,239 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>AI Diet Planner</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      margin:0; 
-      font-family:system-ui; 
-      background:#0b0c10; 
-      color:#e6e7eb; 
-      display:flex; 
-      flex-direction:column; 
-      align-items:center;
-      position: relative;
-      overflow: hidden;
-    }
+  <meta charset="UTF-8">
+  <title>AI Diet Planner</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin:0; 
+      font-family:system-ui; 
+      background:#0b0c10; 
+      color:#e6e7eb; 
+      display:flex; 
+      flex-direction:column; 
+      align-items:center;
+      position: relative;
+      overflow: hidden;
+    }
 
-    /* Видеофон */
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: url('https://www.coverr.co/s3/mp4/coverr-calm-morning-1576.mp4') no-repeat center center;
-      background-size: cover;
-      z-index: -2;
-    }
-    video#bgVideo {
-      position: fixed;
-      top:0; left:0;
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      z-index:-2;
-    }
+    header {
+      text-align:center; 
+      margin:20px;
+      position: relative;
+      z-index: 1;
+    }
 
-    header {
-      text-align:center; 
-      margin:20px;
-      position: relative;
-      z-index: 1;
-    }
+    .container {
+      max-width:1400px; 
+      width:100%; 
+      display:flex; 
+      gap:20px; 
+      margin:20px; 
+      justify-content:center;
+      position: relative;
+      z-index: 1;
+    }
 
-    .container {
-      max-width:1400px; 
-      width:100%; 
-      display:flex; 
-      gap:20px; 
-      margin:20px; 
-      justify-content:center;
-      position: relative;
-      z-index: 1;
-    }
+    .side-img {
+      flex:0 0 250px; 
+      display:flex; 
+      flex-direction:column; 
+      gap:20px;
+    }
 
-    .side-img {
-      flex:0 0 250px; 
-      display:flex; 
-      flex-direction:column; 
-      gap:20px;
-    }
+    .side-img img {
+      width:100%; 
+      border-radius:14px; 
+      border:1px solid rgba(255,255,255,.1);
+    }
 
-    .side-img img {
-      width:100%; 
-      border-radius:14px; 
-      border:1px solid rgba(255,255,255,.1);
-    }
+    .app {
+      flex:1; 
+      display:flex; 
+      gap:20px; 
+      flex-wrap:wrap;
+    }
 
-    .app {
-      flex:1; 
-      display:flex; 
-      gap:20px; 
-      flex-wrap:wrap;
-    }
+    .card {
+      background:#111319; 
+      border-radius:18px; 
+      padding:20px; 
+      box-shadow:0 6px 18px rgba(0,0,0,.35); 
+      flex:1 1 300px;
+    }
 
-    .card {
-      background:#111319; 
-      border-radius:18px; 
-      padding:20px; 
-      box-shadow:0 6px 18px rgba(0,0,0,.35); 
-      flex:1 1 300px;
-    }
+    .btn {
+      display:inline-block; 
+      padding:12px 18px; 
+      border-radius:12px;
+      background:linear-gradient(135deg,#6ee7b7,#60a5fa); 
+      color:#0b1220;
+      font-weight:700; 
+      cursor:pointer; 
+      border:none; 
+      margin-top:10px; 
+      text-decoration:none; 
+      text-align:center;
+    }
 
-    .btn {
-      display:inline-block; 
-      padding:12px 18px; 
-      border-radius:12px;
-      background:linear-gradient(135deg,#6ee7b7,#60a5fa); 
-      color:#0b1220;
-      font-weight:700; 
-      cursor:pointer; 
-      border:none; 
-      margin-top:10px; 
-      text-decoration:none; 
-      text-align:center;
-    }
+    .btn:hover {opacity:0.9; transform:scale(1.05); transition:0.2s;}
+    input[type=file]{display:none}
+    .preview img {max-width:100%; border-radius:14px; border:1px solid rgba(255,255,255,.1);}
+    .diet {margin-top:12px; line-height:1.5;}
+    h2 {margin-top:0;}
+    #lang-switcher {display:flex; justify-content:center; gap:10px; margin-top:10px;}
+    .flag {cursor: pointer; width: 40px; height: 28px; border-radius:6px; border:2px solid transparent; transition: all 0.3s ease;}
+    .flag:hover {transform: scale(1.2);}
+    .flag.active {border-color:#60a5fa; background: rgba(96,165,250,0.2);}
+    .inputs {margin-top:15px; display:flex; gap:10px; flex-wrap:wrap;}
+    .inputs input {flex:1 1 120px; padding:10px; border-radius:10px; border:1px solid #333; background:#1a1c22; color:#e6e7eb;}
+    #week {margin-top:20px; padding-top:15px; border-top:1px solid #333;}
+    #week h3 {margin-top:0;}
+    @media (max-width:1200px){
+      .container {flex-direction:column; align-items:center;}
+      .side-img {flex-direction:row; width:100%; justify-content:space-between;}
+      .side-img img {width:48%;}
+      .app {width:100%;}
+    }
 
-    .btn:hover {opacity:0.9; transform:scale(1.05); transition:0.2s;}
-    input[type=file]{display:none}
-    .preview img {max-width:100%; border-radius:14px; border:1px solid rgba(255,255,255,.1);}
-    .diet {margin-top:12px; line-height:1.5;}
-    h2 {margin-top:0;}
-    #lang-switcher {display:flex; justify-content:center; gap:10px; margin-top:10px;}
-    .flag {cursor: pointer; width: 40px; height: 28px; border-radius:6px; border:2px solid transparent; transition: all 0.3s ease;}
-    .flag:hover {transform: scale(1.2);}
-    .flag.active {border-color:#60a5fa; background: rgba(96,165,250,0.2);}
-    .inputs {margin-top:15px; display:flex; gap:10px; flex-wrap:wrap;}
-    .inputs input {flex:1 1 120px; padding:10px; border-radius:10px; border:1px solid #333; background:#1a1c22; color:#e6e7eb;}
-    #week {margin-top:20px; padding-top:15px; border-top:1px solid #333;}
-    #week h3 {margin-top:0;}
-    @media (max-width:1200px){
-      .container {flex-direction:column; align-items:center;}
-      .side-img {flex-direction:row; width:100%; justify-content:space-between;}
-      .side-img img {width:48%;}
-      .app {width:100%;}
-    }
-
-    :root {--gold: #FFD700; --gold-1: #c78f00; --gold-2: #9a6900; --gold-3: #6a4500;}
-    * {color: var(--gold) !important; text-shadow:1px 1px 0 var(--gold-1),2px 2px 0 var(--gold-2),3px 3px 0 var(--gold-3),0 6px 18px rgba(0,0,0,0.6);}
-    .btn, a, button, input, textarea, select, label {color: var(--gold) !important; text-shadow:1px 1px 0 var(--gold-1),2px 2px 0 var(--gold-2),3px 3px 0 var(--gold-3),0 6px 18px rgba(0,0,0,0.6) !important;}
-    input::placeholder, textarea::placeholder {color: var(--gold) !important; opacity:1;}
-    #animated-counter span {display:inline-block; width:20px; text-align:center; transition: transform 0.3s ease;}
-  </style>
+    :root {--gold: #FFD700; --gold-1: #c78f00; --gold-2: #9a6900; --gold-3: #6a4500;}
+    * {color: var(--gold) !important; text-shadow:1px 1px 0 var(--gold-1),2px 2px 0 var(--gold-2),3px 3px 0 var(--gold-3),0 6px 18px rgba(0,0,0,0.6);}
+    .btn, a, button, input, textarea, select, label {color: var(--gold) !important; text-shadow:1px 1px 0 var(--gold-1),2px 2px 0 var(--gold-2),3px 3px 0 var(--gold-3),0 6px 18px rgba(0,0,0,0.6) !important;}
+    input::placeholder, textarea::placeholder {color: var(--gold) !important; opacity:1;}
+    #animated-counter span {display:inline-block; width:20px; text-align:center; transition: transform 0.3s ease;}
+    
+    /* Видеофон */
+    video#bgVideo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -2;
+    }
+  </style>
 </head>
 <body>
-  <video autoplay muted loop id="bgVideo">
-  <source src="https://www.coverr.co/s3/mp4/coverr-calm-morning-1576.mp4" type="video/mp4">
-</video>
+  <!-- Видеофон -->
+  <video autoplay muted loop id="bgVideo">
+    <source src="https://www.coverr.co/s3/mp4/coverr-calm-morning-1576.mp4" type="video/mp4">
+  </video>
 
-<style>
-  video#bgVideo {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: -2;
-  }
-</style>
-здесь больше ничего не меняй <!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <title>AI Diet Planner</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      margin:0; 
-      font-family:system-ui; 
-      background:#0b0c10; 
-      color:#e6e7eb; 
-      display:flex; 
-      flex-direction:column; 
-      align-items:center;
-      position: relative;
-      overflow: hidden;
-    }
+  <header>
+    <h1 id="title">AI Diet Planner (online)</h1>
+    <p id="subtitle">Загрузи фото — получи готовую диету</p>
+    <div id="lang-switcher">
+      <img class="flag active" data-lang="ru" src="https://flagcdn.com/w40/ru.png" alt="RU">
+      <img class="flag" data-lang="en" src="https://flagcdn.com/w40/gb.png" alt="EN">
+      <img class="flag" data-lang="ka" src="https://flagcdn.com/w40/ge.png" alt="GE">
+    </div>
+    <a href="diets.html" class="btn">Перейти к диетам</a>
+  </header>
 
-    /* Видеофон */
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: url('https://www.coverr.co/s3/mp4/coverr-calm-morning-1576.mp4') no-repeat center center;
-      background-size: cover;
-      z-index: -2;
-    }
-    video#bgVideo {
-      position: fixed;
-      top:0; left:0;
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      z-index:-2;
-    }
+  <div class="container">
+    <div class="side-img"><img src="11.png" alt="11"></div>
 
-    header {
-      text-align:center; 
-      margin:20px;
-      position: relative;
-      z-index: 1;
-    }
+    <main class="app">
+      <section class="card">
+        <h2 id="uploadTitle">Загрузка фото</h2>
+        <label class="btn" for="file" id="uploadBtn">Выбрать фото</label>
+        <input type="file" id="file" accept="image/*">
+        <div class="preview" style="margin-top:16px">
+          <img id="img" hidden>
+        </div>
+        <div class="inputs">
+          <input type="number" id="height" placeholder="Рост (см)">
+          <input type="number" id="weight" placeholder="Вес (кг)">
+        </div>
+        <button class="btn" id="analyze">Назначить диету</button>
+      </section>
 
-    .container {
-      max-width:1400px; 
-      width:100%; 
-      display:flex; 
-      gap:20px; 
-      margin:20px; 
-      justify-content:center;
-      position: relative;
-      z-index: 1;
-    }
+      <section class="card">
+        <h2 id="resultTitle">Твоя диета</h2>
+        <div id="result" class="diet">Здесь появится план питания</div>
+        <div id="week"></div>
+      </section>
+    </main>
 
-    .side-img {
-      flex:0 0 250px; 
-      display:flex; 
-      flex-direction:column; 
-      gap:20px;
-    }
+    <div class="side-img"><img src="10.png" alt="10"></div>
+  </div>
 
-    .side-img img {
-      width:100%; 
-      border-radius:14px; 
-      border:1px solid rgba(255,255,255,.1);
-    }
+  <div style="max-width:300px; margin:30px auto; padding:15px; background:#111319; border-radius:18px; box-shadow:0 6px 18px rgba(0,0,0,.35); text-align:center;">
+    <div style="font-weight:bold; margin-bottom:10px;">Visitors</div>
+    <div id="animated-counter" style="font-size:28px; font-weight:700;"></div>
+  </div>
 
-    .app {
-      flex:1; 
-      display:flex; 
-      gap:20px; 
-      flex-wrap:wrap;
-    }
+  <script>
+    const counterEl = document.getElementById('animated-counter');
+    let count = 12345;
+    function animateCounter() {
+      count += Math.floor(Math.random()*3);
+      counterEl.innerHTML = '';
+      count.toString().split('').forEach(d=>{
+        const span=document.createElement('span');
+        span.textContent=d;
+        span.style.transform='translateY(-10px)';
+        counterEl.appendChild(span);
+        setTimeout(()=>{ span.style.transform='translateY(0)'; },50);
+      });
+    }
+    setInterval(animateCounter,1000);
+    animateCounter();
 
-    .card {
-      background:#111319; 
-      border-radius:18px; 
-      padding:20px; 
-      box-shadow:0 6px 18px rgba(0,0,0,.35); 
-      flex:1 1 300px;
-    }
+    const fileInput=document.getElementById('file');
+    const img=document.getElementById('img');
+    const analyzeBtn=document.getElementById('analyze');
+    const resultEl=document.getElementById('result');
+    const weekEl=document.getElementById('week');
+    const flags=document.querySelectorAll('.flag');
+    let currentLang="ru";
 
-    .btn {
-      display:inline-block; 
-      padding:12px 18px; 
-      border-radius:12px;
-      background:linear-gradient(135deg,#6ee7b7,#60a5fa); 
-      color:#0b1220;
-      font-weight:700; 
-      cursor:pointer; 
-      border:none; 
-      margin-top:10px; 
-      text-decoration:none; 
-      text-align:center;
-    }
+    const diets={
+      ru:{loss:{title:"Похудение", text:"08:00 – Завтрак: овсянка с ягодами (300 ккал)\n13:00 – Обед: куриная грудка + салат (450 ккал)\n19:00 – Ужин: салат с тунцом (350 ккал)", week:["Понедельник: овощной суп, салат","Вторник: рыба на пару, гречка","Среда: куриная грудка, овощи","Четверг: омлет, салат","Пятница: творог, фрукты","Суббота: индейка, овощи","Воскресенье: лёгкий суп, овощи"]}, gain:{title:"Набор массы", text:"08:00 – Завтрак: омлет из 4 яиц, хлеб (500 ккал)\n13:30 – Обед: рис, говядина, овощи (700 ккал)\n20:00 – Ужин: паста с курицей (600 ккал)", week:["Понедельник: курица, рис","Вторник: говядина, картофель","Среда: омлет, тосты","Четверг: паста, курица","Пятница: рыба, рис","Суббота: индейка, макароны","Воскресенье: пицца домашняя"]}, keep:{title:"Поддержание веса", text:"07:30 – Завтрак: йогурт с мюсли (350 ккал)\n13:00 – Обед: курица, гречка, овощи (550 ккал)\n19:30 – Ужин: рыба + салат (450 ккал)", week:["Понедельник: каша, фрукты","Вторник: рыба, овощи","Среда: курица, салат","Четверг: омлет, овощи","Пятница: йогурт, орехи","Суббота: индейка, овощи","Воскресенье: овощной суп"]}},
+      en:{loss:{title:"Weight Loss", text:"08:00 – Breakfast: oatmeal with berries (300 kcal)\n13:00 – Lunch: grilled chicken + salad (450 kcal)\n19:00 – Dinner: tuna salad (350 kcal)", week:["Mon: vegetable soup, salad","Tue: steamed fish, buckwheat","Wed: chicken breast, veggies","Thu: omelet, salad","Fri: cottage cheese, fruits","Sat: turkey, veggies","Sun: light soup, salad"]}, gain:{title:"Muscle Gain", text:"08:00 – Breakfast: 4-egg omelet, bread (500 kcal)\n13:30 – Lunch: rice, beef, veggies (700 kcal)\n20:00 – Dinner: pasta with chicken (600 kcal)", week:["Mon: chicken & rice","Tue: beef & potatoes","Wed: omelet & toasts","Thu: pasta & chicken","Fri: fish & rice","Sat: turkey & pasta","Sun: homemade pizza"]}, keep:{title:"Maintain Weight", text:"07:30 – Breakfast: yogurt with muesli (350 kcal)\n13:00 – Lunch: chicken, buckwheat, veggies (550 kcal)\n19:30 – Dinner: fish + salad (450 kcal)", week:["Mon: porridge, fruits","Tue: fish & veggies","Wed: chicken & salad","Thu: omelet & veggies","Fri: yogurt & nuts","Sat: turkey & veggies","Sun: vegetable soup"]}},
+      ka:{loss:{title:"წონის კლება", text:"08:00 – საუზმე: ჟაჟი ხილებით (300 კკალ)\n13:00 – სადილი: ქათამი + სალათი (450 კკალ)\n19:00 – ვახშამი: თინუსის სალათი (350 კკალ)", week:["ორშაბათი: ბოსტნეულის სუპი, სალათი","სამშაბათი: თევზი ორთქლზე, გირჩი","ოთხშაბათი: ქათმის ძროხა, ბოსტნეული","ხუთშაბათი: ომლეტი, სალათი","პარასკევი: ყველი, ხილი","შაბათი: ინდაური, ბოსტნეული","კვირა: მსუბუქი სუპი, ბოსტნეული"]}, gain:{title:"მასის გაზრდა", text:"08:00 – საუზმე: ომლეტი 4 კვერცხი, პური (500 კკალ)\n13:30 – სადილი: ბრინჯი, ხორცი, ბოსტნეული (700 კკალ)\n20:00 – ვახშამი: პასტა ქათმით (600 კკალ)", week:["ორშაბათი: ქათამი, ბრინჯი","სამშაბათი: ხორცი, კარტოფილი","ოთხშაბათი: ომლეტი, ტოსტები","ხუთშაბათი: პასტა, ქათამი","პარასკევი: თევზი, ბრინჯი","შაბათი: ინდაური, მაკარონი","კვირა: პიცა სახლის"]}, keep:{title:"წონის შენარჩუნება", text:"07:30 – საუზმე: იოგურტი მუსლით (350 კკალ)\n13:00 – სადილი: ქათამი, გირჩი, ბოსტნეული (550 კკალ)\n19:30 – ვახშამი: თევზი + სალათი (450 კკალ)", week:["ორშაბათი: შვრია, ხილი","სამშაბათი: თევზი, ბოსტნეული","ოთხშაბათი: ქათამი, სალათი","ხუთშაბათი: ომლეტი, ბოსტნეული","პარასკევი: იოგურტი, კაკალი","შაბათი: ინდაური, ბოსტნეული","კვირა: ბოსტნეულის სუპი"]}}
+    };
 
-    .btn:hover {opacity:0.9; transform:scale(1.05); transition:0.2s;}
-    input[type=file]{display:none}
-    .preview img {max-width:100%; border-radius:14px; border:1px solid rgba(255,255,255,.1);}
-    .diet {margin-top:12px; line-height:1.5;}
-    h2 {margin-top:0;}
-    #lang-switcher {display:flex; justify-content:center; gap:10px; margin-top:10px;}
-    .flag {cursor: pointer; width: 40px; height: 28px; border-radius:6px; border:2px solid transparent; transition: all 0.3s ease;}
-    .flag:hover {transform: scale(1.2);}
-    .flag.active {border-color:#60a5fa; background: rgba(96,165,250,0.2);}
-    .inputs {margin-top:15px; display:flex; gap:10px; flex-wrap:wrap;}
-    .inputs input {flex:1 1 120px; padding:10px; border-radius:10px; border:1px solid #333; background:#1a1c22; color:#e6e7eb;}
-    #week {margin-top:20px; padding-top:15px; border-top:1px solid #333;}
-    #week h3 {margin-top:0;}
-    @media (max-width:1200px){
-      .container {flex-direction:column; align-items:center;}
-      .side-img {flex-direction:row; width:100%; justify-content:space-between;}
-      .side-img img {width:48%;}
-      .app {width:100%;}
-    }
+    const uiText={ru:{title:"AI Diet Planner (online)",subtitle:"Загрузи фото — получи готовую диету",uploadTitle:"Загрузка фото",uploadBtn:"Выбрать фото",analyze:"Назначить диету",resultTitle:"Твоя диета",empty:"Здесь появится план питания",week:"Диета недели"},en:{title:"AI Diet Planner (online)",subtitle:"Upload a photo — get your diet plan",uploadTitle:"Upload Photo",uploadBtn:"Choose Photo",analyze:"Generate Diet",resultTitle:"Your Diet",empty:"Your diet plan will appear here",week:"Weekly Diet"},ka:{title:"AI დიეტის პლანერი",subtitle:"ატვირთე ფოტო — მიიღე დიეტა",uploadTitle:"ფოტოს ატვირთვა",uploadBtn:"ფოტო",analyze:"დიეტის გენერაცია",resultTitle:"შენი დიეტა",empty:"აქ გამოჩნდება დიეტა",week:"კვირის დიეტა"}};
 
-    :root {--gold: #FFD700; --gold-1: #c78f00; --gold-2: #9a6900; --gold-3: #6a4500;}
-    * {color: var(--gold) !important; text-shadow:1px 1px 0 var(--gold-1),2px 2px 0 var(--gold-2),3px 3px 0 var(--gold-3),0 6px 18px rgba(0,0,0,0.6);}
-    .btn, a, button, input, textarea, select, label {color: var(--gold) !important; text-shadow:1px 1px 0 var(--gold-1),2px 2px 0 var(--gold-2),3px 3px 0 var(--gold-3),0 6px 18px rgba(0,0,0,0.6) !important;}
-    input::placeholder, textarea::placeholder {color: var(--gold) !important; opacity:1;}
-    #animated-counter span {display:inline-block; width:20px; text-align:center; transition: transform 0.3s ease;}
-  </style>
-</head>
-<body>
-    <video autoplay muted loop id="bgVideo">
-    <source src="https://www.coverr.co/s3/mp4/coverr-calm-morning-1576.mp4" type="video/mp4">
-  </video>
+    fileInput.addEventListener('change', e=>{const f=e.target.files[0]; if(f){ img.src=URL.createObjectURL(f); img.hidden=false; }});
 
-  <header>
-    <h1 id="title">AI Diet Planner (online)</h1>
-    <p id="subtitle">Загрузи фото — получи готовую диету</p>
-    <div id="lang-switcher">
-      <img class="flag active" data-lang="ru" src="https://flagcdn.com/w40/ru.png" alt="RU">
-      <img class="flag" data-lang="en" src="https://flagcdn.com/w40/gb.png" alt="EN">
-      <img class="flag" data-lang="ka" src="https://flagcdn.com/w40/ge.png" alt="GE">
-    </div>
-    <a href="diets.html" class="btn">Перейти к диетам</a>
-  </header>
+    function speak(text, lang){const utterance=new SpeechSynthesisUtterance(text);utterance.lang=lang==="ru"?"ru-RU":lang==="en"?"en-US":"ka-GE";speechSynthesis.cancel();speechSynthesis.speak(utterance);}
 
-  <div class="container">
-    <div class="side-img"><img src="11.png" alt="11"></div>
+    analyzeBtn.addEventListener('click', ()=>{
+      const h=parseFloat(document.getElementById("height").value);
+      const w=parseFloat(document.getElementById("weight").value);
+      let dietType;
+      if(h && w){
+        const bmi=w/((h/100)**2);
+        if(bmi<18.5) dietType="gain";
+        else if(bmi>25) dietType="loss";
+        else dietType="keep";
+      } else { const types=["loss","gain","keep"]; dietType=types[Math.floor(Math.random()*3)]; }
+      const d=diets[currentLang][dietType];
+      resultEl.innerHTML=`<h3>${d.title}</h3>${d.text.replace(/\n/g,"<br>")}`;
+      weekEl.innerHTML=`<h3>${uiText[currentLang].week}</h3><ul>${d.week.map(x=>"<li>"+x+"</li>").join("")}</ul>`;
+      speak(`${d.title}. ${d.text}`, currentLang);
+    });
 
-    <main class="app">
-      <section class="card">
-        <h2 id="uploadTitle">Загрузка фото</h2>
-        <label class="btn" for="file" id="uploadBtn">Выбрать фото</label>
-        <input type="file" id="file" accept="image/*">
-        <div class="preview" style="margin-top:16px">
-          <img id="img" hidden>
-        </div>
-        <div class="inputs">
-          <input type="number" id="height" placeholder="Рост (см)">
-          <input type="number" id="weight" placeholder="Вес (кг)">
-        </div>
-        <button class="btn" id="analyze">Назначить диету</button>
-      </section>
+    function setLanguage(lang){
+      currentLang=lang;
+      const t=uiText[lang];
+      document.getElementById("title").innerText=t.title;
+      document.getElementById("subtitle").innerText=t.subtitle;
+      document.getElementById("uploadTitle").innerText=t.uploadTitle;
+      document.getElementById("uploadBtn").innerText=t.uploadBtn;
+      document.getElementById("analyze").innerText=t.analyze;
+      document.getElementById("resultTitle").innerText=t.resultTitle;
+      resultEl.innerText=t.empty;
+      weekEl.innerHTML="";
+      flags.forEach(f=>f.classList.toggle('active',f.dataset.lang===lang));
+    }
 
-      <section class="card">
-        <h2 id="resultTitle">Твоя диета</h2>
-        <div id="result" class="diet">Здесь появится план питания</div>
-        <div id="week"></div>
-      </section>
-    </main>
-
-    <div class="side-img"><img src="10.png" alt="10"></div>
-  </div>
-
-  <div style="max-width:300px; margin:30px auto; padding:15px; background:#111319; border-radius:18px; box-shadow:0 6px 18px rgba(0,0,0,.35); text-align:center;">
-    <div style="font-weight:bold; margin-bottom:10px;">Visitors</div>
-    <div id="animated-counter" style="font-size:28px; font-weight:700;"></div>
-  </div>
-
-  <script>
-    const counterEl = document.getElementById('animated-counter');
-    let count = 12345;
-    function animateCounter() {
-      count += Math.floor(Math.random()*3);
-      counterEl.innerHTML = '';
-      count.toString().split('').forEach(d=>{
-        const span=document.createElement('span');
-        span.textContent=d;
-        span.style.transform='translateY(-10px)';
-        counterEl.appendChild(span);
-        setTimeout(()=>{ span.style.transform='translateY(0)'; },50);
-      });
-    }
-    setInterval(animateCounter,1000);
-    animateCounter();
-
-    const fileInput=document.getElementById('file');
-    const img=document.getElementById('img');
-    const analyzeBtn=document.getElementById('analyze');
-    const resultEl=document.getElementById('result');
-    const weekEl=document.getElementById('week');
-    const flags=document.querySelectorAll('.flag');
-    let currentLang="ru";
-
-    const diets={
-      ru:{loss:{title:"Похудение", text:"08:00 – Завтрак: овсянка с ягодами (300 ккал)\n13:00 – Обед: куриная грудка + салат (450 ккал)\n19:00 – Ужин: салат с тунцом (350 ккал)", week:["Понедельник: овощной суп, салат","Вторник: рыба на пару, гречка","Среда: куриная грудка, овощи","Четверг: омлет, салат","Пятница: творог, фрукты","Суббота: индейка, овощи","Воскресенье: лёгкий суп, овощи"]}, gain:{title:"Набор массы", text:"08:00 – Завтрак: омлет из 4 яиц, хлеб (500 ккал)\n13:30 – Обед: рис, говядина, овощи (700 ккал)\n20:00 – Ужин: паста с курицей (600 ккал)", week:["Понедельник: курица, рис","Вторник: говядина, картофель","Среда: омлет, тосты","Четверг: паста, курица","Пятница: рыба, рис","Суббота: индейка, макароны","Воскресенье: пицца домашняя"]}, keep:{title:"Поддержание веса", text:"07:30 – Завтрак: йогурт с мюсли (350 ккал)\n13:00 – Обед: курица, гречка, овощи (550 ккал)\n19:30 – Ужин: рыба + салат (450 ккал)", week:["Понедельник: каша, фрукты","Вторник: рыба, овощи","Среда: курица, салат","Четверг: омлет, овощи","Пятница: йогурт, орехи","Суббота: индейка, овощи","Воскресенье: овощной суп"]}},
-      en:{loss:{title:"Weight Loss", text:"08:00 – Breakfast: oatmeal with berries (300 kcal)\n13:00 – Lunch: grilled chicken + salad (450 kcal)\n19:00 – Dinner: tuna salad (350 kcal)", week:["Mon: vegetable soup, salad","Tue: steamed fish, buckwheat","Wed: chicken breast, veggies","Thu: omelet, salad","Fri: cottage cheese, fruits","Sat: turkey, veggies","Sun: light soup, salad"]}, gain:{title:"Muscle Gain", text:"08:00 – Breakfast: 4-egg omelet, bread (500 kcal)\n13:30 – Lunch: rice, beef, veggies (700 kcal)\n20:00 – Dinner: pasta with chicken (600 kcal)", week:["Mon: chicken & rice","Tue: beef & potatoes","Wed: omelet & toasts","Thu: pasta & chicken","Fri: fish & rice","Sat: turkey & pasta","Sun: homemade pizza"]}, keep:{title:"Maintain Weight", text:"07:30 – Breakfast: yogurt with muesli (350 kcal)\n13:00 – Lunch: chicken, buckwheat, veggies (550 kcal)\n19:30 – Dinner: fish + salad (450 kcal)", week:["Mon: porridge, fruits","Tue: fish & veggies","Wed: chicken & salad","Thu: omelet & veggies","Fri: yogurt & nuts","Sat: turkey & veggies","Sun: vegetable soup"]}},
-      ka:{loss:{title:"წონის კლება", text:"08:00 – საუზმე: ჟაჟი ხილებით (300 კკალ)\n13:00 – სადილი: ქათამი + სალათი (450 კკალ)\n19:00 – ვახშამი: თინუსის სალათი (350 კკალ)", week:["ორშაბათი: ბოსტნეულის სუპი, სალათი","სამშაბათი: თევზი ორთქლზე, გირჩი","ოთხშაბათი: ქათმის ძროხა, ბოსტნეული","ხუთშაბათი: ომლეტი, სალათი","პარასკევი: ყველი, ხილი","შაბათი: ინდაური, ბოსტნეული","კვირა: მსუბუქი სუპი, ბოსტნეული"]}, gain:{title:"მასის გაზრდა", text:"08:00 – საუზმე: ომლეტი 4 კვერცხი, პური (500 კკალ)\n13:30 – სადილი: ბრინჯი, ხორცი, ბოსტნეული (700 კკალ)\n20:00 – ვახშამი: პასტა ქათმით (600 კკალ)", week:["ორშაბათი: ქათამი, ბრინჯი","სამშაბათი: ხორცი, კარტოფილი","ოთხშაბათი: ომლეტი, ტოსტები","ხუთშაბათი: პასტა, ქათამი","პარასკევი: თევზი, ბრინჯი","შაბათი: ინდაური, მაკარონი","კვირა: პიცა სახლის"]}, keep:{title:"წონის შენარჩუნება", text:"07:30 – საუზმე: იოგურტი მუსლით (350 კკალ)\n13:00 – სადილი: ქათამი, გირჩი, ბოსტნეული (550 კკალ)\n19:30 – ვახშამი: თევზი + სალათი (450 კკალ)", week:["ორშაბათი: შვრია, ხილი","სამშაბათი: თევზი, ბოსტნეული","ოთხშაბათი: ქათამი, სალათი","ხუთშაბათი: ომლეტი, ბოსტნეული","პარასკევი: იოგურტი, კაკალი","შაბათი: ინდაური, ბოსტნეული","კვირა: ბოსტნეულის სუპი"]}}
-    };
-
-    const uiText={ru:{title:"AI Diet Planner (online)",subtitle:"Загрузи фото — получи готовую диету",uploadTitle:"Загрузка фото",uploadBtn:"Выбрать фото",analyze:"Назначить диету",resultTitle:"Твоя диета",empty:"Здесь появится план питания",week:"Диета недели"},en:{title:"AI Diet Planner (online)",subtitle:"Upload a photo — get your diet plan",uploadTitle:"Upload Photo",uploadBtn:"Choose Photo",analyze:"Generate Diet",resultTitle:"Your Diet",empty:"Your diet plan will appear here",week:"Weekly Diet"},ka:{title:"AI დიეტის პლანერი",subtitle:"ატვირთე ფოტო — მიიღე დიეტა",uploadTitle:"ფოტოს ატვირთვა",uploadBtn:"ფოტო",analyze:"დიეტის გენერაცია",resultTitle:"შენი დიეტა",empty:"აქ გამოჩნდება დიეტა",week:"კვირის დიეტა"}};
-
-    fileInput.addEventListener('change', e=>{const f=e.target.files[0]; if(f){ img.src=URL.createObjectURL(f); img.hidden=false; }});
-
-    function speak(text, lang){const utterance=new SpeechSynthesisUtterance(text);utterance.lang=lang==="ru"?"ru-RU":lang==="en"?"en-US":"ka-GE";speechSynthesis.cancel();speechSynthesis.speak(utterance);}
-
-    analyzeBtn.addEventListener('click', ()=>{
-      const h=parseFloat(document.getElementById("height").value);
-      const w=parseFloat(document.getElementById("weight").value);
-      let dietType;
-      if(h && w){
-        const bmi=w/((h/100)**2);
-        if(bmi<18.5) dietType="gain";
-        else if(bmi>25) dietType="loss";
-        else dietType="keep";
-      } else { const types=["loss","gain","keep"]; dietType=types[Math.floor(Math.random()*3)]; }
-      const d=diets[currentLang][dietType];
-      resultEl.innerHTML=`<h3>${d.title}</h3>${d.text.replace(/\n/g,"<br>")}`;
-      weekEl.innerHTML=`<h3>${uiText[currentLang].week}</h3><ul>${d.week.map(x=>"<li>"+x+"</li>").join("")}</ul>`;
-      speak(`${d.title}. ${d.text}`, currentLang);
-    });
-
-    function setLanguage(lang){
-      currentLang=lang;
-      const t=uiText[lang];
-      document.getElementById("title").innerText=t.title;
-      document.getElementById("subtitle").innerText=t.subtitle;
-      document.getElementById("uploadTitle").innerText=t.uploadTitle;
-      document.getElementById("uploadBtn").innerText=t.uploadBtn;
-      document.getElementById("analyze").innerText=t.analyze;
-      document.getElementById("resultTitle").innerText=t.resultTitle;
-      resultEl.innerText=t.empty;
-      weekEl.innerHTML="";
-      flags.forEach(f=>f.classList.toggle('active',f.dataset.lang===lang));
-    }
-
-    flags.forEach(flag=>flag.addEventListener('click',()=>setLanguage(flag.dataset.lang)));
-    setLanguage('ru');
-  </script>
+    flags.forEach(flag=>flag.addEventListener('click',()=>setLanguage(flag.dataset.lang)));
+    setLanguage('ru');
+  </script>
 </body>
 </html>
